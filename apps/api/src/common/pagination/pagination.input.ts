@@ -12,6 +12,8 @@ export const PaginationInputSchema = z
     skip: 0,
   });
 
+export class PaginationInputDto extends createZodDto(PaginationInputSchema) {}
+
 @InputType()
 export class PaginationInput extends createZodDto(PaginationInputSchema) {
   @Field({ nullable: true })
