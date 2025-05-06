@@ -24,8 +24,218 @@ model User {
   resetTokenExpiry      DateTime?
   verificationToken     String?
   verificationTokenDate DateTime?
+  role                  String    @default("user")
   isActive              Boolean   @default(true)
   isVerified            Boolean   @default(false)
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @default(now()) @updatedAt
+
+  // Relations
+  taxReturns TaxReturn[]
+}
+
+model TaxReturn {
+  id                 Int       @id @default(autoincrement())
+  taxpayerId         String    @map("taxpayer_id")
+  taxYear            Int
+  userId             Int? // Optional: if a User is linked to this return
+  status             String    @default("draft") // e.g., "draft", "submitted", "processed", "rejected"
+  submissionDate     DateTime?
+  totalIncome        Decimal?  @db.Decimal(15, 2)
+  totalDeductions    Decimal?  @db.Decimal(15, 2)
+  totalTaxableIncome Decimal?  @db.Decimal(15, 2)
+  totalTaxes         Decimal?  @db.Decimal(15, 2)
+  totalRefund        Decimal?  @db.Decimal(15, 2)
+  totalOwed          Decimal?  @db.Decimal(15, 2)
+  notes              String?   @db.Text
+  dateCreated        DateTime  @default(now())
+  dateModified       DateTime  @default(now()) @updatedAt
+
+  // Relations
+  taxpayer      Taxpayer       @relation(fields: [taxpayerId], references: [id])
+  user          User?          @relation(fields: [userId], references: [id])
+  incomeSources IncomeSource[]
+  assets        Asset[]
+  debts         Debt[]
+  benefits      Benefit[]
+
+  @@unique([taxpayerId, taxYear])
+  @@index([taxpayerId])
+  @@index([taxYear])
+  @@index([userId])
+  @@index([status])
+}
+
+model Taxpayer {
+  id            String   @id @map("taxpayer_id") // Icelandic kennitala
+  firstName     String
+  lastName      String
+  fullAddress   String
+  streetAddress String
+  postalCode    String
+  city          String
+  email         String?
+  phoneNumber   String?
+  taxYear       Int
+  dateCreated   DateTime @default(now())
+  dateModified  DateTime @default(now()) @updatedAt
+
+  // Relations
+  incomeSources IncomeSource[]
+  assets        Asset[]
+  debts         Debt[]
+  benefits      Benefit[]
+  taxReturns    TaxReturn[]
+
+  @@index([taxYear])
+}
+
+model IncomeSource {
+  id             Int      @id @default(autoincrement())
+  taxpayerId     String   @map("taxpayer_id")
+  taxReturnId    Int?
+  sourceName     String
+  sourceIdNumber String?
+  incomeType     String
+  amount         Decimal  @db.Decimal(15, 2)
+  taxYear        Int
+  dateCreated    DateTime @default(now())
+  dateModified   DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer  Taxpayer   @relation(fields: [taxpayerId], references: [id])
+  taxReturn TaxReturn? @relation(fields: [taxReturnId], references: [id])
+
+  @@index([taxpayerId])
+  @@index([taxYear])
+  @@index([incomeType])
+  @@index([taxReturnId])
+}
+
+// New parent model for assets
+model Asset {
+  id           Int      @id @default(autoincrement())
+  taxpayerId   String   @map("taxpayer_id")
+  taxReturnId  Int?
+  assetType    String // "real_estate" or "vehicle"
+  taxYear      Int
+  dateCreated  DateTime @default(now())
+  dateModified DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer  Taxpayer   @relation(fields: [taxpayerId], references: [id])
+  taxReturn TaxReturn? @relation(fields: [taxReturnId], references: [id])
+
+  // Child asset relations (one-to-one)
+  realEstate RealEstate?
+  vehicle    Vehicle?
+
+  @@index([taxpayerId])
+  @@index([taxYear])
+  @@index([assetType])
+  @@index([taxReturnId])
+}
+
+model RealEstate {
+  id            Int     @id @default(autoincrement())
+  assetId       Int     @unique // Link to parent Asset
+  propertyId    String  @unique
+  address       String
+  propertyValue Decimal @db.Decimal(15, 2)
+  purchaseYear  Int?
+
+  // Relation to parent Asset
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
+model Vehicle {
+  id                 Int     @id @default(autoincrement())
+  assetId            Int     @unique // Link to parent Asset
+  registrationNumber String
+  purchaseYear       Int?
+  purchasePrice      Decimal @db.Decimal(15, 2)
+
+  // Relation to parent Asset
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([registrationNumber])
+}
+
+// New parent model for debts
+model Debt {
+  id           Int      @id @default(autoincrement())
+  taxpayerId   String   @map("taxpayer_id")
+  taxReturnId  Int?
+  debtType     String // "housing_loan" or "other_debt"
+  taxYear      Int
+  dateCreated  DateTime @default(now())
+  dateModified DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer  Taxpayer   @relation(fields: [taxpayerId], references: [id])
+  taxReturn TaxReturn? @relation(fields: [taxReturnId], references: [id])
+
+  // Child debt relations (one-to-one)
+  housingLoan HousingLoan?
+  otherDebt   OtherDebt?
+
+  @@index([taxpayerId])
+  @@index([taxYear])
+  @@index([debtType])
+  @@index([taxReturnId])
+}
+
+model HousingLoan {
+  id                 Int      @id @default(autoincrement())
+  debtId             Int      @unique // Link to parent Debt
+  lenderName         String
+  lenderId           String?
+  loanNumber         String
+  propertyAddress    String
+  loanDate           DateTime
+  loanTermYears      Int?
+  annualPayments     Decimal  @db.Decimal(15, 2)
+  principalRepayment Decimal  @db.Decimal(15, 2)
+  interestExpenses   Decimal  @db.Decimal(15, 2)
+  remainingBalance   Decimal  @db.Decimal(15, 2)
+
+  // Relation to parent Debt
+  debt Debt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+
+  @@index([loanNumber])
+}
+
+model OtherDebt {
+  id               Int     @id @default(autoincrement())
+  debtId           Int     @unique // Link to parent Debt
+  debtType         String
+  debtIdentifier   String?
+  creditorName     String
+  interestExpenses Decimal @db.Decimal(15, 2)
+  remainingBalance Decimal @db.Decimal(15, 2)
+
+  // Relation to parent Debt
+  debt Debt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+
+  @@index([debtType])
+}
+
+model Benefit {
+  id           Int      @id @default(autoincrement())
+  taxpayerId   String   @map("taxpayer_id")
+  taxReturnId  Int?
+  providerName String
+  benefitType  String
+  amount       Decimal  @db.Decimal(15, 2)
+  taxYear      Int
+  dateCreated  DateTime @default(now())
+  dateModified DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer  Taxpayer   @relation(fields: [taxpayerId], references: [id])
+  taxReturn TaxReturn? @relation(fields: [taxReturnId], references: [id])
+
+  @@index([taxpayerId])
+  @@index([taxYear])
+  @@index([taxReturnId])
 }

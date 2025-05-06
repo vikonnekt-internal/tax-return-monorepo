@@ -2,11 +2,45 @@ import { PrismaClient } from "@prisma/client";
 import { DeepMockProxy } from "jest-mock-extended";
 import { parse } from "url";
 import { user } from "./user";
+import { taxpayer } from "./taxpayer";
+import { taxReturn } from "./taxReturn";
+import { incomeSource } from "./incomeSource";
+import { asset } from "./asset";
+import { realEstate } from "./realEstate";
+import { vehicle } from "./vehicle";
+import { debt } from "./debt";
+import { housingLoan } from "./housingLoan";
+import { otherDebt } from "./otherDebt";
+import { benefit } from "./benefit";
 import { PrismaModelName } from "../database.types";
 
-// Order is important here
+// CRITICAL ISSUE: There's no debt.ts file to create Debt parent records,
+// but housingLoan and otherDebt depend on these records through debtId.
+// Need to create a debt.ts file with records matching the debtId values
+// in housingLoan and otherDebt.
+
+// Correct seeding order based on schema.prisma relationships
 export const mocks = {
-  user: user,
+  // Independent base entities
+  user, // No foreign key dependencies
+  taxpayer, // No foreign key dependencies
+
+  // First level of dependencies
+  taxReturn, // Depends on user and taxpayer
+
+  // Second level that depend on taxpayer and optionally taxReturn
+  incomeSource, // Depends on taxpayer and optionally taxReturn
+  asset, // Depends on taxpayer and optionally taxReturn
+  debt, // Depends on taxpayer and optionally taxReturn
+  benefit, // Depends on taxpayer and optionally taxReturn
+
+  // Asset children - must be after asset
+  realEstate, // Depends on asset (requires matching assetId)
+  vehicle, // Depends on asset (requires matching assetId)
+
+  // Debt children - must be after debt
+  housingLoan, // Depends on debt (requires matching debtId)
+  otherDebt, // Depends on debt (requires matching debtId)
 };
 
 function getDatabaseNameFromPostgresURI(uri: string) {
@@ -72,4 +106,17 @@ const mockEntities = (
   });
 };
 
-export { user, mockEntities };
+export {
+  user,
+  taxpayer,
+  taxReturn,
+  incomeSource,
+  asset,
+  realEstate,
+  vehicle,
+  debt,
+  housingLoan,
+  otherDebt,
+  benefit,
+  mockEntities,
+};
