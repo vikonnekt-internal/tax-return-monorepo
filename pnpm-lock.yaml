@@ -87,6 +87,9 @@ importers:
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
+      class-validator:
+        specifier: ^0.13.2
+        version: 0.13.2
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
