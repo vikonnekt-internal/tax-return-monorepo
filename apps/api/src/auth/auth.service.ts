@@ -35,7 +35,7 @@ export class AuthService {
     const token = this._createToken({
       id: user.id,
       email: user.email,
-      role: [],
+      role: [user.role],
     });
 
     return {

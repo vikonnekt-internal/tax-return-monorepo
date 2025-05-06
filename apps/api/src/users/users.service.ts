@@ -74,6 +74,7 @@ export class UsersService {
         lastName: true,
         email: true,
         phone: true,
+        role: true,
       },
     });
 

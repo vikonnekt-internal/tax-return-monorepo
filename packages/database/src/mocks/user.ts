@@ -16,6 +16,7 @@ export const user: User[] = [
     verificationToken: "verificationToken",
     verificationTokenDate: null,
     isVerified: true,
+    role: "user",
     phone: "+25461484512",
   },
 ];
