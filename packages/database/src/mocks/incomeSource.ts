@@ -1,0 +1,53 @@
+import { IncomeSource } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+
+export const incomeSource: IncomeSource[] = [
+  {
+    id: 1,
+    taxpayerId: "1234567890",
+    taxReturnId: 1,
+    sourceName: "Acme Corporation",
+    sourceIdNumber: "555-1234",
+    incomeType: "salary",
+    amount: new Prisma.Decimal(6500000.0),
+    taxYear: 2023,
+    dateCreated: new Date("2023-03-01T09:15:00Z"),
+    dateModified: new Date("2023-03-01T09:15:00Z"),
+  },
+  {
+    id: 2,
+    taxpayerId: "1234567890",
+    taxReturnId: 1,
+    sourceName: "Rental Property",
+    sourceIdNumber: "PROP-001",
+    incomeType: "rental",
+    amount: new Prisma.Decimal(700000.0),
+    taxYear: 2023,
+    dateCreated: new Date("2023-03-01T09:20:00Z"),
+    dateModified: new Date("2023-03-01T09:20:00Z"),
+  },
+  {
+    id: 3,
+    taxpayerId: "0987654321",
+    taxReturnId: 2,
+    sourceName: "Umbrella Inc",
+    sourceIdNumber: "555-7890",
+    incomeType: "salary",
+    amount: new Prisma.Decimal(5200000.0),
+    taxYear: 2023,
+    dateCreated: new Date("2023-03-10T11:30:00Z"),
+    dateModified: new Date("2023-03-10T11:30:00Z"),
+  },
+  {
+    id: 4,
+    taxpayerId: "0987654321",
+    taxReturnId: 2,
+    sourceName: "Bank of Iceland",
+    sourceIdNumber: "BANK-123",
+    incomeType: "interest",
+    amount: new Prisma.Decimal(300000.0),
+    taxYear: 2023,
+    dateCreated: new Date("2023-03-10T11:45:00Z"),
+    dateModified: new Date("2023-03-10T11:45:00Z"),
+  },
+];
