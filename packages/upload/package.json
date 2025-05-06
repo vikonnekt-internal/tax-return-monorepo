@@ -1,0 +1,24 @@
+{
+  "name": "@tax/upload",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "lint": " eslint \"**/*.ts*\"",
+    "build": "tsc --build --force tsconfig.json",
+    "prepare": "pnpm build"
+  },
+  "devDependencies": {
+    "@tax/eslint-config": "workspace:*",
+    "@tax/typescript-config": "workspace:*",
+    "@types/node": "^20.11.28",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.535.0",
+    "@aws-sdk/s3-request-presigner": "^3.535.0",
+    "@nestjs/common": "^11.0.11",
+    "uuid": "^9.0.1"
+  }
+}

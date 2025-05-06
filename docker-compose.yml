@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://appuser:apppass@postgres:5432/appdb
+      - VITE_API_URL=http://api:3000/api
+      - VITE_LEGAL_PARSER_URL=http://legal-parser-ms:8080
+      - VITE_LEGAL_FORMATTER_URL=http://legal-formatter-ms:8081
+    depends_on:
+      - postgres
+      - legal-parser-ms
+      - legal-formatter-ms
+      - legal-adaptation-ms
+
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - app-network
+
+  
+  legal-parser-ms:
+    build:
+      context: .
+      dockerfile: apps/legal-parser-ms/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODEL_PATH=/models/legal-parser
+    volumes:
+      - ./models/legal-parser:/models/legal-parser
+    networks:
+      - app-network
+
+  legal-formatter-ms:
+    build:
+      context: .
+      dockerfile: apps/legal-formatter-ms/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TEMPLATE_DIR=/templates
+    volumes:
+      - ./templates:/templates
+    networks:
+      - app-network
+
+  legal-adaptation-ms:
+    build:
+      context: .
+      dockerfile: apps/legal-adaptation-ms/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TEMPLATE_DIR=/templates
+    volumes:
+      - ./templates:/templates
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: apppass
+      POSTGRES_DB: appdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U appuser -d appdb" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+  
+
+volumes:
+  postgres_data:
+   
+
+networks:
+  app-network:
+    driver: bridge

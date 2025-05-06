@@ -1,0 +1,24 @@
+{
+  "name": "@tax/logger",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "eslint \"**/*.ts*\"",
+    "build": "tsc --build --force tsconfig.json",
+    "prepare": "pnpm build"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "@tax/eslint-config": "workspace:*",
+    "@tax/typescript-config": "workspace:*",
+    "typescript": "^5.3.3"
+  }
+}

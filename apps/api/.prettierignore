@@ -1,0 +1,8 @@
+**/*/generated/
+**/graphql.ts
+**/dist
+*.md
+/.nx/cache
+node_modules
+build
+dist

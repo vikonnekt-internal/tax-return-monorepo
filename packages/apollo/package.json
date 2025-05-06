@@ -1,0 +1,27 @@
+{
+  "name": "@tax/apollo",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "lint": " eslint \"**/*.ts*\"",
+    "generate:graphql": "graphql-codegen"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.28.4",
+    "@tanstack/react-query-devtools": "^5.28.4",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/client-preset": "^4.2.4",
+    "@graphql-codegen/typescript-resolvers": "^4.0.6",
+    "@tax/typescript-config": "workspace:*",
+    "@tanstack/eslint-plugin-query": "^5.20.1",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  }
+}

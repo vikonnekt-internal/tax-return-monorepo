@@ -1,0 +1,3 @@
+{
+  "extends": "@tax/typescript-config/react-library.json"
+}

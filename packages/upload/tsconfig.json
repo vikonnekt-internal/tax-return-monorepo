@@ -1,0 +1,7 @@
+{
+  "extends": "@tax/typescript-config/nest.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "exclude": ["./dist"]
+}

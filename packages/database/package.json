@@ -1,0 +1,45 @@
+{
+  "name": "@tax/database",
+  "version": "0.0.0",
+  "description": "Database services, Prisma setup, and related utilities",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "format": "prisma format",
+    "lint": " eslint \"**/*.ts*\"",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --skip-generate --accept-data-loss",
+    "build": "tsc --build --force tsconfig.json",
+    "migrate": "prisma migrate dev --name",
+    "seed": "prisma db seed",
+    "update:common": "ts-node updateStaticData.ts",
+    "prepare": "pnpm db:generate && pnpm build && pnpm format",
+    "db:test": "dotenv -e .env.test -- prisma db push"
+  },
+  "prisma": {
+    "seed": "ts-node ./seed.ts"
+  },
+  "keywords": [
+    "database",
+    "prisma",
+    "nestjs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nestjs/testing": "^10.3.3",
+    "@types/node": "^20.11.28",
+    "eslint": "^8.57.0",
+    "jest-mock-extended": "^3.0.5",
+    "prisma-dbml-generator": "^0.12.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
+    "@tax/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.1",
+    "@prisma/client": "6.4.1",
+    "class-validator": "^0.13.1",
+    "prisma": "^6.4.1"
+  }
+}

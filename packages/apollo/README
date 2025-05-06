@@ -1,0 +1,8 @@
+# Apollo Package
+
+The purpose of this package is to provide utils that works well with apollo client.
+One of the utils are:
+
+- Custom useQuery, useLazyQuery and useMutation hooks to prevent future migration if we will change the data layer by just adjusting this hooks
+
+- Updating cache functions , to update existing queries without refetching the data from the API.

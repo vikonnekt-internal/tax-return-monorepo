@@ -1,0 +1,7 @@
+{
+  "root": true,
+  "extends": ["@tax/eslint-config/node"],
+  "rules": {
+    "no-console": "off",
+  },
+}

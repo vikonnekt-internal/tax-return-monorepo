@@ -1,0 +1,5 @@
+# Logger package
+
+The purpose of this package to have a logger utilities that we can use with specific levels to avoid forgotten logs on the production.
+
+Since we have an eslint rule to remove console.log , the only way to log things is using this package.

@@ -1,0 +1,17 @@
+version: "2"
+services:
+  database:
+    image: postgres:14
+    restart: always
+    container_name: prisma-db-treyst
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: treyst
+      POSTGRES_PASSWORD: treyst
+      POSTGRES_DB: treyst
+    volumes:
+      - ./db:/var/lib/postgresql/data
+networks:
+  treyst-net:
+    external: true

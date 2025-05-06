@@ -1,0 +1,7 @@
+{
+  "extends": "@tax/typescript-config/base.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "exclude": ["./dist"]
+}

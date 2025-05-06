@@ -1,0 +1,29 @@
+{
+  "name": "treyst-monorepo",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "generate:graphql": "turbo generate:graphql",
+    "up:deps": "./scripts/init-env.sh",
+    "prepare:db": "turbo db:push db:generate",
+    "start:prod": "node apps/api/dist/main.js"
+  },
+  "devDependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "@nestjs/cli": "^10.0.0",
+    "@types/node": "^22.15.3",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.4",
+    "typescript": "5.7.3"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
