@@ -2,74 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input AdaptationInput {
-  celexId: String!
-  languageIds: [Float!]!
-  legislativeType: LegislativeType!
-  preset: Preset!
-  ruleType: String
-}
-
-type ArticleJsonType {
-  article_content: [ParagraphType!]!
-  article_number: String!
-  article_title: String!
-}
-
-input CreateUserInput {
-  confirmPassword: String!
-  email: String!
-  firstName: String!
-  lastName: String!
-  password: String!
-}
-
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-type Document {
-  createdAt: DateTime!
-  fileKey: String!
-  fileName: String!
-  fileSize: Float!
-  fileType: String!
-  id: ID!
-  signedUrl: String
-  storageProvider: StorageProvider!
-  updatedAt: DateTime!
-  userId: ID!
-}
-
-type DocumentDetails {
-  articleJson: [ArticleJsonType!]!
-  celexId: String!
-  fileName: String!
-  fileType: String!
-  fileUrl: String!
-  language: String!
-  legislativeType: LegislativeType!
-  preset: String!
-  relatedFiles: [String!]!
-  userId: Float!
-}
-
-type LanguageDTO {
-  id: String!
-  name: String!
-}
-
-enum LegislativeType {
-  DECISION
-  DIRECTIVE
-  REGULATION
-}
-
-type LegislativeTypeDTO {
-  id: String!
-  name: String!
-}
 
 """LoginResult"""
 type LoginResult {
@@ -78,47 +14,13 @@ type LoginResult {
 }
 
 type Mutation {
-  adaptDocument(input: AdaptationInput!): DocumentDetails!
-  deleteDocument(id: Int!): Document!
   loginAdmin(email: String!, password: String!): LoginResult!
-  parseDocument(input: ParseDocumentInput!): DocumentDetails!
   resetPassword(input: ResetPasswordInput!): Boolean!
   sendResetPasswordEmail(email: String!): String!
-  signupIndividual(userData: CreateUserInput!): User!
-  updatePassword(input: UpdatePasswordInput!): User!
-  updateUser(input: UpdateUserInput!): User!
-}
-
-type ParagraphType {
-  paragraph_content: String!
-  paragraph_number: String!
-}
-
-input ParseDocumentInput {
-  celexId: String!
-  languageIds: [Float!]!
-  legislativeType: LegislativeType!
-  preset: Preset!
-}
-
-enum Preset {
-  EEA
-  ESA
-  EURLEX
-}
-
-type PresetDTO {
-  id: String!
-  name: String!
 }
 
 type Query {
-  document(id: Int!): Document
-  getLanguages: [LanguageDTO!]!
-  getLegislativeTypes: [LegislativeTypeDTO!]!
-  getPresets: [PresetDTO!]!
   sayHello: String!
-  userDocuments: [Document!]!
   whoAmI: User!
 }
 
@@ -132,29 +34,10 @@ type RoleGuest {
   accountType: [String!]!
 }
 
-"""Storage provider for documents"""
-enum StorageProvider {
-  AWS_S3
-  AZURE_BLOB
-  LOCAL
-}
-
 """Token"""
 type Token {
   expiresIn: String!
   token: String!
-}
-
-input UpdatePasswordInput {
-  currentPassword: String!
-  newPassword: String!
-}
-
-input UpdateUserInput {
-  email: String
-  firstName: String
-  lastName: String
-  phone: String
 }
 
 """File upload scalar type"""

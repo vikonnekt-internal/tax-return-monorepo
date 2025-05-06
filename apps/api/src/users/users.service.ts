@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { compare, hash } from 'bcryptjs';
-import { CreateUserInput } from './dto/create-user.input';
 import { UsersRepository, UserWithoutPassword } from './users.repository';
 import { LoginUserDto } from 'src/auth/dto/login-user.input';
 import { User } from '@tax/database';
@@ -8,25 +7,6 @@ import { User } from '@tax/database';
 @Injectable()
 export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
-
-  async createUser(data: CreateUserInput) {
-    const { password, confirmPassword, email, firstName, lastName, ...rest } =
-      data;
-
-    if (password !== confirmPassword) {
-      throw new HttpException("Passwords don't match", HttpStatus.UNAUTHORIZED);
-    }
-
-    const hashedPassword = await hash(password, 10);
-
-    return this.userRepository.signup({
-      ...rest,
-      firstName,
-      lastName,
-      email,
-      password: hashedPassword,
-    });
-  }
 
   async login({ email, password }: LoginUserDto) {
     const user = await this.userRepository.getOneWithPassword({

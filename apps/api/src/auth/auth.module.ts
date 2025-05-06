@@ -6,12 +6,10 @@ import { AuthResolver } from './auth.resolver';
 import { UsersModule } from 'src/users/users.module';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
-import { MailModule } from '@tax/mail';
 
 @Module({
   imports: [
     UsersModule,
-    MailModule,
     JwtModule.registerAsync({
       inject: [EnvService],
       useFactory: (envService: EnvService) => {

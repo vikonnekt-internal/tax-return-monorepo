@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateUserInput } from 'src/users/dto/create-user.input';
 import { UsersService } from 'src/users/users.service';
 import { LoginUserDto } from './dto/login-user.input';
 import { JwtService } from '@nestjs/jwt';
@@ -9,14 +8,13 @@ import { GraphQLError } from 'graphql';
 import { hash } from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { EnvService } from 'src/env-config/env.service';
-import { MailService } from '@tax/mail';
+
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly envService: EnvService,
-    private readonly mailService: MailService,
   ) {}
 
   private _createToken(
@@ -30,12 +28,6 @@ export class AuthService {
       expiresIn,
       token,
     };
-  }
-  async signup(userData: CreateUserInput) {
-    const createdUser = await this.usersService.createUser({
-      ...userData,
-    });
-    return createdUser;
   }
 
   async login(loginUserDto: LoginUserDto) {
@@ -80,13 +72,6 @@ export class AuthService {
     const token = uuidv4();
 
     const resetPasswordUrl = `${this.envService.clientUrl}/reset-password/${token}`;
-
-    await this.mailService.sendEmail({
-      to: email,
-      text: 'Reset password',
-      subject: 'Reset your password',
-      html: `Click <a href="${resetPasswordUrl}">here</a> to reset your password`,
-    });
 
     const resetTokenExpiry = new Date(Date.now() + 1000 * 60 * 60);
     await this.usersService.updateOne({
