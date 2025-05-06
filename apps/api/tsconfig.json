@@ -8,6 +8,8 @@
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
+    "declarationMap": false,
+    "declaration": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
   }

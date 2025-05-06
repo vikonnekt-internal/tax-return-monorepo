@@ -17,6 +17,16 @@ import { APP_PIPE } from '@nestjs/core';
 import logger from './common/logger';
 import { ZodError } from 'zod';
 import { LoggerMiddleware } from './common/logger/logger.middlewear';
+import { TaxpayersModule } from './taxpayers/taxpayers.module';
+import { IncomeSourcesModule } from './income-sources/income-sources.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { HousingLoansModule } from './housing-loans/housing-loans.module';
+import { OtherDebtsModule } from './other-debts/other-debts.module';
+import { RealEstatesModule } from './real-estates/real-estates.module';
+import { BenefitsModule } from './benefits/benefits.module';
+import { TaxReportsModule } from './tax-reports/tax-reports.module';
+import { AssetsModule } from './assets/assets.module';
+import { DebtsModule } from './debts/debts.module';
 
 dotenv.config();
 @Module({
@@ -51,6 +61,9 @@ dotenv.config();
         };
       },
       playground: true,
+      buildSchemaOptions: {
+        dateScalarMode: 'isoDate',
+      },
       resolvers: {
         Upload: GraphQLUpload,
       },
@@ -58,6 +71,16 @@ dotenv.config();
     AuthModule,
     UsersModule,
     EnvModule,
+    TaxpayersModule,
+    IncomeSourcesModule,
+    VehiclesModule,
+    HousingLoansModule,
+    OtherDebtsModule,
+    RealEstatesModule,
+    BenefitsModule,
+    TaxReportsModule,
+    AssetsModule,
+    DebtsModule,
   ],
   providers: [
     {

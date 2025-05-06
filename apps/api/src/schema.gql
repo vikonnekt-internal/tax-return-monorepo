@@ -2,10 +2,202 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Asset {
+  assetType: String!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  id: Int!
+  realEstate: RealEstate
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+  vehicle: Vehicle
+}
+
+"""The type of asset"""
+enum AssetTypeEnum {
+  REAL_ESTATE
+  VEHICLE
+}
+
+type Benefit {
+  amount: Float!
+  benefitType: String!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  id: ID!
+  providerName: String!
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateAssetInput {
+  assetType: AssetTypeEnum!
+  realEstate: CreateRealEstateInput
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+  vehicle: CreateVehicleInput
+}
+
+input CreateBenefitInput {
+  amount: Float!
+  benefitType: String!
+  providerName: String!
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateDebtInput {
+  debtType: DebtType!
+  housingLoan: CreateHousingLoanInput
+  otherDebt: CreateOtherDebtInput
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateHousingLoanInput {
+  annualPayments: Float!
+  interestExpenses: Float!
+  lenderId: String
+  lenderName: String!
+  loanDate: String!
+  loanNumber: String!
+  loanTermYears: Int
+  principalRepayment: Float!
+  propertyAddress: String!
+  remainingBalance: Float!
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateIncomeSourceInput {
+  amount: Float!
+  incomeType: String!
+  sourceIdNumber: String
+  sourceName: String!
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateOtherDebtInput {
+  creditorName: String!
+  debtIdentifier: String
+  debtType: OtherDebtType!
+  interestExpenses: Float!
+  remainingBalance: Float!
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateRealEstateInput {
+  address: String!
+  assetId: Float!
+  propertyId: String!
+  propertyValue: Float!
+  purchaseYear: Int
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+input CreateTaxReportInput {
+  notes: String
+  status: String = "draft"
+  submissionDate: DateTime
+  taxYear: Int!
+  taxpayerId: String!
+  totalDeductions: Float
+  totalIncome: Float
+  totalOwed: Float
+  totalRefund: Float
+  totalTaxableIncome: Float
+  totalTaxes: Float
+  userId: Int
+}
+
+input CreateTaxpayerInput {
+  city: String!
+  email: String
+  firstName: String!
+  fullAddress: String!
+  id: String!
+  lastName: String!
+  phoneNumber: String
+  postalCode: String!
+  streetAddress: String!
+  taxYear: Int!
+}
+
+input CreateVehicleInput {
+  purchasePrice: Float!
+  purchaseYear: Int
+  registrationNumber: String!
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Debt {
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  debtType: String!
+  housingLoan: HousingLoan
+  id: Int!
+  otherDebt: OtherDebt
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+"""The type of debt"""
+enum DebtType {
+  HOUSING_LOAN
+  OTHER_DEBT
+}
+
+"""housing loan"""
+type HousingLoan {
+  annualPayments: Float!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  id: ID!
+  interestExpenses: Float!
+  lenderId: String
+  lenderName: String!
+  loanDate: DateTime!
+  loanNumber: String!
+  loanTermYears: Int
+  principalRepayment: Float!
+  propertyAddress: String!
+  remainingBalance: Float!
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+"""income source"""
+type IncomeSource {
+  amount: Float!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  id: ID!
+  incomeType: String!
+  sourceIdNumber: String
+  sourceName: String!
+  taxReturnId: Int
+  taxYear: Int!
+  taxpayerId: String!
+}
 
 """LoginResult"""
 type LoginResult {
@@ -14,14 +206,106 @@ type LoginResult {
 }
 
 type Mutation {
+  associateIncomeSourcesWithTaxReturn(incomeSourceIds: [Int!]!, taxReturnId: Int!): [IncomeSource!]!
+  createAsset(createAssetInput: CreateAssetInput!): Asset!
+  createBenefit(createBenefitInput: CreateBenefitInput!): Benefit!
+  createDebt(createDebtInput: CreateDebtInput!): Debt!
+  createHousingLoan(input: CreateHousingLoanInput!): HousingLoan!
+  createIncomeSource(input: CreateIncomeSourceInput!): IncomeSource!
+  createOtherDebt(createOtherDebtInput: CreateOtherDebtInput!): OtherDebt!
+  createRealEstate(createRealEstateInput: CreateRealEstateInput!): RealEstate!
+  createTaxReport(createTaxReportInput: CreateTaxReportInput!): TaxReportType!
+  createTaxpayer(input: CreateTaxpayerInput!): Taxpayer!
+  createVehicle(input: CreateVehicleInput!): Vehicle!
+  deleteHousingLoan(id: Int!): HousingLoan!
+  deleteIncomeSource(id: Int!): IncomeSource!
+  deleteTaxpayer(id: String!): Taxpayer!
+  deleteVehicle(id: Int!): Vehicle!
   loginAdmin(email: String!, password: String!): LoginResult!
+  removeAsset(id: Int!): Asset!
+  removeBenefit(id: Int!): Benefit!
+  removeDebt(id: Int!): Debt!
+  removeOtherDebt(id: Int!): OtherDebt!
+  removeRealEstate(id: String!): RealEstate!
+  removeTaxReport(id: Int!): TaxReportType!
   resetPassword(input: ResetPasswordInput!): Boolean!
   sendResetPasswordEmail(email: String!): String!
+  updateAsset(updateAssetInput: UpdateAssetInput!): Asset!
+  updateBenefit(updateBenefitInput: UpdateBenefitInput!): Benefit!
+  updateDebt(updateDebtInput: UpdateDebtInput!): Debt!
+  updateHousingLoan(input: UpdateHousingLoanInput!): HousingLoan!
+  updateIncomeSource(input: UpdateIncomeSourceInput!): IncomeSource!
+  updateOtherDebt(id: Int!, updateOtherDebtInput: UpdateOtherDebtInput!): OtherDebt!
+  updateRealEstate(updateRealEstateInput: UpdateRealEstateInput!): RealEstate!
+  updateTaxReport(updateTaxReportInput: UpdateTaxReportInput!): TaxReportType!
+  updateTaxpayer(input: UpdateTaxpayerInput!): Taxpayer!
+  updateVehicle(input: UpdateVehicleInput!): Vehicle!
+}
+
+"""other debt"""
+type OtherDebt {
+  creditorName: String!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  debtIdentifier: String
+  debtType: String!
+  id: ID!
+  interestExpenses: Float!
+  remainingBalance: Float!
+  taxYear: Int!
+  taxpayerId: String!
+}
+
+"""The type of other debt"""
+enum OtherDebtType {
+  CAR_LOAN
+  CREDIT_CARD
+  OTHER
+  PERSONAL_LOAN
+  STUDENT_LOAN
 }
 
 type Query {
+  asset(id: Int!): Asset!
+  assets(taxYear: Int!, taxpayerId: String!): [Asset!]!
+  benefit(id: Int!): Benefit!
+  benefits(taxYear: Int!, taxpayerId: String!): [Benefit!]!
+  debt(id: Int!): Debt!
+  debts(taxYear: Int!, taxpayerId: String!): [Debt!]!
+  findAll(incomeType: String, skip: Int, take: Int, taxReturnId: Int, taxYear: Int): [IncomeSource!]!
+  housingLoan(id: Int!): HousingLoan!
+  housingLoans(skip: Int, take: Int, taxYear: Int): [HousingLoan!]!
+  housingLoansByTaxpayer(taxYear: Int, taxpayerId: String!): [HousingLoan!]!
+  incomeSource(id: Int!): IncomeSource!
+  incomeSources(incomeType: String, skip: Int, take: Int, taxYear: Int): [IncomeSource!]!
+  incomeSourcesByTaxReturn(taxReturnId: Int!): [IncomeSource!]!
+  incomeSourcesByTaxpayer(taxYear: Int, taxpayerId: String!): [IncomeSource!]!
+  otherDebt(id: Int!): OtherDebt!
+  otherDebts(taxYear: Int!, taxpayerId: String!): [OtherDebt!]!
+  realEstate(id: String!): RealEstate!
+  realEstates(taxYear: Int!, taxpayerId: String!): [RealEstate!]!
   sayHello: String!
+  taxReport(id: Int!): TaxReportType!
+  taxReportDetailed(id: Int!): TaxReportType!
+  taxReports: [TaxReportType!]!
+  taxReportsByTaxpayer(taxpayerId: String!): [TaxReportType!]!
+  taxpayer(id: String!): Taxpayer!
+  taxpayers(skip: Float, take: Float, taxYear: Float): [Taxpayer!]!
+  vehicle(id: Int!): Vehicle!
+  vehicles(skip: Int, take: Int, taxYear: Int): [Vehicle!]!
+  vehiclesByTaxpayer(taxYear: Int, taxpayerId: String!): [Vehicle!]!
   whoAmI: User!
+}
+
+type RealEstate {
+  address: String!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  id: ID!
+  propertyValue: Float!
+  purchaseYear: Int
+  taxYear: Int!
+  taxpayerId: String!
 }
 
 input ResetPasswordInput {
@@ -34,10 +318,162 @@ type RoleGuest {
   accountType: [String!]!
 }
 
+type TaxReportType {
+  assets: [Asset!]
+  benefits: [Benefit!]
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  debts: [Debt!]
+  id: ID!
+  incomeSources: [IncomeSource!]
+  notes: String
+  status: String!
+  submissionDate: DateTime
+  taxYear: Float!
+  taxpayer: Taxpayer
+  taxpayerId: String!
+  totalDeductions: Float
+  totalIncome: Float
+  totalOwed: Float
+  totalRefund: Float
+  totalTaxableIncome: Float
+  totalTaxes: Float
+  userId: Float
+}
+
+"""taxpayer"""
+type Taxpayer {
+  city: String!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  email: String
+  firstName: String!
+  fullAddress: String!
+  id: ID!
+  lastName: String!
+  phoneNumber: String
+  postalCode: String!
+  streetAddress: String!
+  taxYear: Int!
+}
+
 """Token"""
 type Token {
   expiresIn: String!
   token: String!
+}
+
+input UpdateAssetInput {
+  assetType: AssetTypeEnum
+  id: Int!
+  realEstate: UpdateRealEstateInput
+  taxReturnId: Int
+  taxYear: Int
+  taxpayerId: String
+  vehicle: UpdateVehicleInput
+}
+
+input UpdateBenefitInput {
+  amount: Float
+  benefitType: String
+  id: Int!
+  providerName: String
+  taxReturnId: Int
+  taxYear: Int
+  taxpayerId: String
+}
+
+input UpdateDebtInput {
+  debtType: DebtType
+  housingLoan: UpdateHousingLoanInput
+  id: Int!
+  otherDebt: UpdateOtherDebtInput
+  taxReturnId: Int
+  taxYear: Int
+  taxpayerId: String
+}
+
+input UpdateHousingLoanInput {
+  annualPayments: Float
+  id: Int!
+  interestExpenses: Float
+  lenderId: String
+  lenderName: String
+  loanDate: String
+  loanNumber: String
+  loanTermYears: Int
+  principalRepayment: Float
+  propertyAddress: String
+  remainingBalance: Float
+  taxYear: Int
+}
+
+input UpdateIncomeSourceInput {
+  amount: Float
+  id: Int!
+  incomeType: String
+  sourceIdNumber: String
+  sourceName: String
+  taxReturnId: Int
+  taxYear: Int
+  taxpayerId: String
+}
+
+input UpdateOtherDebtInput {
+  creditorName: String
+  debtIdentifier: String
+  debtType: OtherDebtType
+  id: Int!
+  interestExpenses: Float
+  remainingBalance: Float
+  taxYear: Int
+}
+
+input UpdateRealEstateInput {
+  address: String
+  id: ID!
+  propertyId: String
+  propertyValue: Float
+  purchaseYear: Float
+  taxYear: Float
+  taxpayerId: String
+}
+
+input UpdateTaxReportInput {
+  id: Int!
+  notes: String
+  status: String
+  submissionDate: DateTime
+  taxYear: Int
+  taxpayerId: String
+  totalDeductions: Float
+  totalIncome: Float
+  totalOwed: Float
+  totalRefund: Float
+  totalTaxableIncome: Float
+  totalTaxes: Float
+  userId: Int
+}
+
+input UpdateTaxpayerInput {
+  city: String
+  email: String
+  firstName: String
+  fullAddress: String
+  id: String!
+  lastName: String
+  phoneNumber: String
+  postalCode: String
+  streetAddress: String
+  taxYear: Int
+}
+
+input UpdateVehicleInput {
+  id: Int!
+  purchasePrice: Float
+  purchaseYear: Int
+  registrationNumber: String
+  taxYear: Int
 }
 
 """File upload scalar type"""
@@ -54,4 +490,16 @@ type User {
   phone: String
   profilePic: String
   updatedAt: DateTime!
+}
+
+"""vehicle"""
+type Vehicle {
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  id: ID!
+  purchasePrice: Float!
+  purchaseYear: Int
+  registrationNumber: String!
+  taxYear: Int!
+  taxpayerId: String!
 }
