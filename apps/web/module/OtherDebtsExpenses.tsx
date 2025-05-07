@@ -1,35 +1,36 @@
-import React from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import NextSubmit from "../component/ui/NextSubmit";
-import { Box } from "../component/Box/Box";
-import { Text } from "../component/Text/Text";
-import { Button } from "../component/Button/Button";
-import { Input } from "../component/Input/Input";
-import { Select } from "../component/Select/Select";
-import { GridRow } from "../component/Grid/GridRow/GridRow";
-import { GridColumn } from "../component/Grid/GridColumn/GridColumn";
+import React from 'react'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
-// Define the validation schema using Zod
+import NextSubmit from '../component/ui/NextSubmit'
+import { GridColumn } from '../component/Grid/GridColumn/GridColumn'
+import { GridRow } from '../component/Grid/GridRow/GridRow'
+import { Box } from '../component/Box/Box'
+import { Icon } from '../component/IconRC/Icon'
+import { Input } from '../component/Input/Input'
+import { Select } from '../component/Select/Select'
+import { Text } from '../component/Text/Text'
+
+
 const debtExpenseSchema = z.object({
-  tegund: z.string().min(1, { message: "Tegund er nauðsynlegt" }),
+  tegund: z.string().min(1, { message: 'Tegund er nauðsynlegt' }),
   upphæð: z
     .string()
-    .regex(/^\d+(\.\d+)?$/, { message: "Upphæð verður að vera tala" }),
-});
+    .regex(/^\d+(\.\d+)?$/, { message: 'Upphæð verður að vera tala' }),
+})
 
 const formSchema = z.object({
   debtExpenses: z.array(debtExpenseSchema).min(1),
-});
+})
 
 // Define the form data type
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
 interface OtherDebtsExpensesProps {
-  onNext?: (data: FormValues) => void;
-  initialData?: Partial<FormValues>;
-  onBack?: () => void;
+  onNext?: (data: FormValues) => void
+  initialData?: Partial<FormValues>
+  onBack?: () => void
 }
 
 const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
@@ -45,23 +46,23 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       debtExpenses: [
-        { tegund: "Kreditkort", upphæð: "150.000" },
-        { tegund: "Persónulán", upphæð: "500.000" },
+        { tegund: 'Kreditkort', upphæð: '150.000' },
+        { tegund: 'Persónulán', upphæð: '500.000' },
       ],
     },
-  });
+  })
 
   const { fields, append } = useFieldArray({
     control,
-    name: "debtExpenses",
-  });
+    name: 'debtExpenses',
+  })
 
   const onSubmit = (data: FormValues) => {
-    console.log("Form data:", data);
+    console.log('Form data:', data)
     if (onNext) {
-      onNext(data);
+      onNext(data)
     }
-  };
+  }
 
   return (
     <Box>
@@ -69,7 +70,7 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
         {fields.map((field, index) => (
           <Box key={field.id} marginY={2}>
             <GridRow>
-              <GridColumn span={["12/12", "6/12", "6/12"]}>
+              <GridColumn span={['12/12', '6/12', '6/12']}>
                 <Box marginBottom={1}>
                   <Text variant="small" color="blue400">
                     Tegund
@@ -84,9 +85,9 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
                       label="Tegund"
                       placeholder="Veldu tegund"
                       options={[
-                        { label: "Kreditkort", value: "Kreditkort" },
-                        { label: "Persónulán", value: "Persónulán" },
-                        { label: "Aðrar skuldir", value: "Aðrar skuldir" },
+                        { label: 'Kreditkort', value: 'Kreditkort' },
+                        { label: 'Persónulán', value: 'Persónulán' },
+                        { label: 'Aðrar skuldir', value: 'Aðrar skuldir' },
                       ]}
                       value={
                         field.value
@@ -103,7 +104,7 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
                   )}
                 />
               </GridColumn>
-              <GridColumn span={["12/12", "6/12", "6/12"]}>
+              <GridColumn span={['12/12', '6/12', '6/12']}>
                 <Box marginBottom={1}>
                   <Text variant="small" color="blue400">
                     Upphæð
@@ -131,16 +132,14 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
         ))}
 
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <Button
-            variant="ghost"
-            onClick={() => append({ tegund: "", upphæð: "" })}
-            icon="add"
-            iconType="outline"
-            size="small"
-          >
-            Bæta við línu
-          </Button>
-        </Box>
+            <span
+            onClick={() => append({ tegund: '', upphæð: '' })}
+              className='flex gap-2 items-center'
+            >
+              <Icon type='outline' icon='add' color='blue400' />
+              <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
+            </span>
+          </Box>
 
         <Box marginTop={4}>
           <NextSubmit
@@ -150,7 +149,7 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
         </Box>
       </form>
     </Box>
-  );
-};
+  )
+}
 
-export default OtherDebtsExpenses;
+export default OtherDebtsExpenses

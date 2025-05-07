@@ -1,4 +1,4 @@
-import * as HelperStylesExports from './lib/helperStyles.css'
+import * as HelperStylesExports from './helperStyles.css'
 export const helperStyles = { ...HelperStylesExports }
-export * from './lib/colors/colors'
-export * from './lib/theme'
+export * from './colors/colors'
+export * from './theme'

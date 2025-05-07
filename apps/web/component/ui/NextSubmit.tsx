@@ -1,22 +1,29 @@
-import { Button } from "../Button/Button";
+import { Button } from "../Button/Button"
 
 const NextSubmit = ({
   handleBack,
   handleNext,
+  disabled=false
 }: {
-  handleBack: () => void;
-  handleNext: () => void;
+  handleBack: () => void
+  handleNext: () => void
+  disabled: boolean
 }) => {
   return (
     <div className="w-full flex items-center justify-between">
-      <Button onClick={handleBack} variant="utility">
+      <Button onClick={handleBack} variant="ghost">
         Til baka
       </Button>
-      <Button onClick={handleNext} icon="arrowForward">
+      <div className='flex items-center gap-4'>
+      <Button disabled={disabled} onClick={handleNext} variant='ghost'>
+        Vista framtal
+      </Button>
+      <Button disabled={disabled} onClick={handleNext} icon="arrowForward">
         Áfram
       </Button>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default NextSubmit;
+export default NextSubmit
