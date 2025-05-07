@@ -1,0 +1,14 @@
+{
+  "name": "@tax/island-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev --filter=@tax/island-ui-* --parallel",
+    "lint": "turbo run lint --filter=@tax/island-ui-* --parallel",
+    "check-types": "turbo run check-types --filter=@tax/island-ui-* --parallel",
+    "test": "turbo run test --filter=@tax/island-ui-* --parallel"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@tax/island-ui-fonts",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./fonts.css",
+  "scripts": {
+    "build": "echo 'Nothing to build'",
+    "dev": "echo 'Nothing to watch'"
+  }
+}

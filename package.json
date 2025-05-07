@@ -9,13 +9,15 @@
     "generate:graphql": "turbo generate:graphql",
     "up:deps": "./scripts/init-env.sh",
     "prepare:db": "turbo db:push db:generate",
-    "start:prod": "node apps/api/dist/main.js"
+    "start:prod": "node apps/api/dist/main.js",
+    "postinstall": "pnpm build"
   },
   "devDependencies": {
     "@graphql-typed-document-node/core": "^3.2.0",
     "@nestjs/cli": "^10.0.0",
     "@types/node": "^22.15.3",
     "prettier": "^3.4.2",
+    "tsup": "^8.0.1",
     "turbo": "^2.3.4",
     "typescript": "5.7.3"
   },
