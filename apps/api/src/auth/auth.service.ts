@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { LoginUserDto } from './dto/login-user.input';
 import { JwtService } from '@nestjs/jwt';
 import { ResetPasswordInput } from './dto/reset-password.input';
 import { GraphQLError } from 'graphql';
 import { hash } from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
-import { EnvService } from 'src/env-config/env.service';
+import { EnvService } from '../env-config/env.service';
 
 @Injectable()
 export class AuthService {

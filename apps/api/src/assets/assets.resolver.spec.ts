@@ -272,7 +272,6 @@ describe('AssetsResolver', () => {
     it('should resolve realEstateId correctly', () => {
       const asset: Partial<Asset> = {
         id: 1,
-        taxpayerId: 'taxpayer-123',
         assetType: 'real_estate',
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -285,7 +284,6 @@ describe('AssetsResolver', () => {
     it('should return null for realEstateId when realEstate is not defined', () => {
       const asset: Partial<Asset> = {
         id: 1,
-        taxpayerId: 'taxpayer-123',
         assetType: 'real_estate',
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -298,7 +296,6 @@ describe('AssetsResolver', () => {
     it('should resolve vehicleId correctly', () => {
       const asset: Partial<Asset> = {
         id: 1,
-        taxpayerId: 'taxpayer-123',
         assetType: 'vehicle',
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -311,7 +308,6 @@ describe('AssetsResolver', () => {
     it('should return null for vehicleId when vehicle is not defined', () => {
       const asset: Partial<Asset> = {
         id: 1,
-        taxpayerId: 'taxpayer-123',
         assetType: 'vehicle',
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -324,7 +320,6 @@ describe('AssetsResolver', () => {
     it('should convert assetType to uppercase', () => {
       const asset: Partial<Asset> = {
         id: 1,
-        taxpayerId: 'taxpayer-123',
         assetType: 'real_estate',
         dateCreated: new Date(),
         dateModified: new Date(),

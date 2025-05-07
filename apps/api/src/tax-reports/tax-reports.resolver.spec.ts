@@ -96,7 +96,7 @@ describe('TaxReportsResolver', () => {
         taxYear: 2023,
         status: 'draft',
         userId: mockUser.id,
-        taxpayerId: mockUser.taxpayerId,
+        taxpayer: { id: mockUser.taxpayerId } as any,
         dateCreated: new Date(),
         dateModified: new Date(),
       };
@@ -131,7 +131,7 @@ describe('TaxReportsResolver', () => {
         taxYear: 2023,
         status: 'submitted',
         userId: mockUser.id,
-        taxpayerId: mockUser.taxpayerId,
+        taxpayer: { id: mockUser.taxpayerId } as any,
         dateCreated: new Date(),
         dateModified: new Date(),
       };
@@ -161,7 +161,7 @@ describe('TaxReportsResolver', () => {
           {
             id: 1,
             taxYear: 2023,
-            taxpayerId: mockUser.taxpayerId,
+            taxpayer: { id: mockUser.taxpayerId } as any,
             status: 'draft',
             dateCreated: new Date(),
             dateModified: new Date(),
@@ -190,7 +190,7 @@ describe('TaxReportsResolver', () => {
       const expectedResult = {
         id: 1,
         taxYear: 2023,
-        taxpayerId: mockUser.taxpayerId,
+        taxpayer: { id: mockUser.taxpayerId } as any,
         status: 'draft',
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -215,10 +215,10 @@ describe('TaxReportsResolver', () => {
       const expectedResult: Partial<TaxReportType> = {
         id: 1,
         taxYear: 2023,
-        taxpayerId: mockUser.taxpayerId,
         status: 'draft',
         dateCreated: new Date(),
         dateModified: new Date(),
+        taxpayer: { id: mockUser.taxpayerId } as any,
         incomeSources: [],
         assets: [],
         debts: [],
@@ -250,7 +250,7 @@ describe('TaxReportsResolver', () => {
       const expectedResult = {
         id: 1,
         status: 'submitted',
-        taxpayerId: mockUser.taxpayerId,
+        taxpayer: { id: mockUser.taxpayerId } as any,
         taxYear: 2023,
         dateCreated: new Date(),
         dateModified: new Date(),
@@ -279,7 +279,7 @@ describe('TaxReportsResolver', () => {
       const expectedResult = {
         id: 1,
         deleted: true,
-        taxpayerId: mockUser.taxpayerId,
+        taxpayer: { id: mockUser.taxpayerId } as any,
         taxYear: 2023,
         status: 'deleted',
         dateCreated: new Date(),
@@ -304,11 +304,11 @@ describe('TaxReportsResolver', () => {
       it('should return incomeSources directly if already loaded', async () => {
         const taxReport: Partial<TaxReportType> = {
           id: 1,
-          taxpayerId: mockUser.taxpayerId,
           taxYear: 2023,
           status: 'draft',
           dateCreated: new Date(),
           dateModified: new Date(),
+          taxpayer: { id: mockUser.taxpayerId } as any,
           incomeSources: [{ id: 101, amount: 50000 } as any],
         };
 
@@ -326,20 +326,20 @@ describe('TaxReportsResolver', () => {
       it('should fetch full report if incomeSources not loaded', async () => {
         const taxReport: Partial<TaxReportType> = {
           id: 1,
-          taxpayerId: mockUser.taxpayerId,
           taxYear: 2023,
           status: 'draft',
           dateCreated: new Date(),
           dateModified: new Date(),
+          taxpayer: { id: mockUser.taxpayerId } as any,
         };
 
         const fullReport: Partial<TaxReportType> = {
           id: 1,
-          taxpayerId: mockUser.taxpayerId,
           taxYear: 2023,
           status: 'draft',
           dateCreated: new Date(),
           dateModified: new Date(),
+          taxpayer: { id: mockUser.taxpayerId } as any,
           incomeSources: [{ id: 101, amount: 50000 } as any],
         };
 
@@ -362,20 +362,20 @@ describe('TaxReportsResolver', () => {
       it('should return empty array if no incomeSources found', async () => {
         const taxReport: Partial<TaxReportType> = {
           id: 1,
-          taxpayerId: mockUser.taxpayerId,
           taxYear: 2023,
           status: 'draft',
           dateCreated: new Date(),
           dateModified: new Date(),
+          taxpayer: { id: mockUser.taxpayerId } as any,
         };
 
         const fullReport: Partial<TaxReportType> = {
           id: 1,
-          taxpayerId: mockUser.taxpayerId,
           taxYear: 2023,
           status: 'draft',
           dateCreated: new Date(),
           dateModified: new Date(),
+          taxpayer: { id: mockUser.taxpayerId } as any,
         };
 
         mockTaxReportsService.findOneWithRelations.mockResolvedValue(

@@ -1,26 +1,22 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { z } from 'zod';
-import { passwordRegex } from 'src/common/utils/regex';
+import { passwordRegex } from '../../common/utils/regex';
 
 const ResetPasswordSchema = z.object({
   password: z
     .string()
-    .min(6)
     .regex(
       passwordRegex,
-      'Password must contain at least 1 lowercase letter, 1 uppercase letter, 1 digit, and 1 special character',
+      'Incorrect password format. Password must be at least 8 characters, contain at least 1 lowercase letter, uppercase letter, number and special character',
     ),
   token: z.string(),
 });
 
-export class ResetPasswordInputDto extends createZodDto(ResetPasswordSchema) {}
-
-@InputType()
 export class ResetPasswordInput extends createZodDto(ResetPasswordSchema) {
-  @Field()
+  @Field(() => String)
   password: string;
 
-  @Field()
+  @Field(() => String)
   token: string;
 }

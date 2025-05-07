@@ -10,7 +10,6 @@ type Asset {
   realEstate: RealEstate
   realEstateId: Int
   taxReturnId: Int
-  taxpayerId: String!
   vehicle: Vehicle
   vehicleId: Int
 }
@@ -29,8 +28,6 @@ type Benefit {
   id: Int!
   providerName: String!
   taxReturnId: Int
-  taxYear: Int!
-  taxpayerId: String!
   updatedAt: DateTime!
 }
 
@@ -153,8 +150,6 @@ type Debt {
   id: Int!
   otherDebt: OtherDebt
   taxReturnId: Int
-  taxYear: Int!
-  taxpayerId: String!
   updatedAt: DateTime!
 }
 
@@ -374,13 +369,6 @@ type TaxReportType {
   submissionDate: DateTime
   taxYear: Float!
   taxpayer: Taxpayer
-  taxpayerId: String!
-  totalDeductions: Float
-  totalIncome: Float
-  totalOwed: Float
-  totalRefund: Float
-  totalTaxableIncome: Float
-  totalTaxes: Float
   userId: Float
 }
 

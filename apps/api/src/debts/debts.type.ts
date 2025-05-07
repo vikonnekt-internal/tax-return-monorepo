@@ -8,9 +8,6 @@ export class Debt {
   @Field(() => Int)
   id: number;
 
-  @Field()
-  taxpayerId: string;
-
   @Field(() => Int, { nullable: true })
   taxReturnId?: number;
 
@@ -19,9 +16,6 @@ export class Debt {
 
   @Field()
   debtType: string;
-
-  @Field(() => Int)
-  taxYear: number;
 
   @Field()
   createdAt: Date;

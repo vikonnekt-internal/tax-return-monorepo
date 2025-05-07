@@ -12,16 +12,7 @@ export class Asset {
   taxReturnId?: number;
 
   @Field()
-  taxpayerId: string;
-
-  @Field()
   assetType: string;
-
-  @Field(() => Int, { nullable: true })
-  realEstateId?: number;
-
-  @Field(() => Int, { nullable: true })
-  vehicleId?: number;
 
   @Field()
   dateCreated: Date;

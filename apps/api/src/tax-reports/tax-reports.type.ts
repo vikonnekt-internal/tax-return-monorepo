@@ -12,9 +12,6 @@ export class TaxReportType {
   id: number;
 
   @Field()
-  taxpayerId: string;
-
-  @Field()
   taxYear: number;
 
   @Field({ nullable: true })
@@ -25,24 +22,6 @@ export class TaxReportType {
 
   @Field({ nullable: true })
   submissionDate?: Date;
-
-  @Field(() => Float, { nullable: true })
-  totalIncome?: number;
-
-  @Field(() => Float, { nullable: true })
-  totalDeductions?: number;
-
-  @Field(() => Float, { nullable: true })
-  totalTaxableIncome?: number;
-
-  @Field(() => Float, { nullable: true })
-  totalTaxes?: number;
-
-  @Field(() => Float, { nullable: true })
-  totalRefund?: number;
-
-  @Field(() => Float, { nullable: true })
-  totalOwed?: number;
 
   @Field({ nullable: true })
   notes?: string;
