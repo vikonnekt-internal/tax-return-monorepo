@@ -1,0 +1,77 @@
+.big {
+  background-color: goldenrod;
+}
+
+.auth-box {
+  width: 660px;
+  border-radius: 8px;
+  border: 1px #ccdfff solid;
+
+  &__subtitle {
+    color: #00003c;
+    font-size: 24px;
+    font-family: IBM Plex Sans;
+    font-weight: 300;
+    line-height: 34px;
+    word-wrap: break-word;
+  }
+
+  &__title {
+    color: #00003c;
+    font-size: 42px;
+    font-family: IBM Plex Sans;
+    font-weight: 600;
+    line-height: 52px;
+    word-wrap: break-word;
+  }
+
+  &__top-description {
+    color: #0061ff;
+    font-size: 14px;
+    font-family: IBM Plex Sans;
+    font-weight: 600;
+    line-height: 16px;
+    word-wrap: break-word;
+    margin-top: 2rem;
+  }
+}
+
+.auth-ways {
+  background: #f2f7ff;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding-inline: 2rem;
+  padding-bottom: 2rem;
+  padding-top: 1rem;
+  gap: 1rem;
+
+  &__title {
+    color: #0044b3;
+    font-size: 24px;
+    font-family: IBM Plex Sans;
+    font-weight: 600;
+    line-height: 34px;
+    word-wrap: break-word;
+  }
+
+  &__link {
+    color: #0061ff;
+    font-size: 18px;
+    font-family: IBM Plex Sans;
+    font-weight: 600;
+    line-height: 24px;
+    word-wrap: break-word;
+    padding: 16px;
+    background: white;
+    text-align: center;
+  }
+}
+
+.auth-logo {
+  position: absolute;
+  margin-top: -26px;
+  background: white;
+  padding: 5px;
+  box-shadow: 1px 1px 4px 8px white;
+}
