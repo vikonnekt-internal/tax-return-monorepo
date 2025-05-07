@@ -17,7 +17,7 @@ import { UserEntity } from '../auth/entities/user-entities';
 import { PaginationInput } from '../common/pagination/pagination.input';
 import { RolesGuard } from '../auth/role.guard';
 import { Roles } from '../auth/role.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('tax-reports')
 @UseGuards(JwtAuthGuard, RolesGuard)

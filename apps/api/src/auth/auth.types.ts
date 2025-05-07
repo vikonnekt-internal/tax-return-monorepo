@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { User } from 'src/users/users.type';
+import { User } from '../users/users.type';
 
 @ObjectType({ description: 'Token' })
 export class Token {

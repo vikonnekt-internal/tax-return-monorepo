@@ -17,7 +17,7 @@ import { Roles } from '../auth/role.decorator';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { UserEntity } from '../auth/entities/user-entities';
 import { PaginationInput } from '../common/pagination/pagination.input';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('debts')
 @UseGuards(JwtAuthGuard, RolesGuard)

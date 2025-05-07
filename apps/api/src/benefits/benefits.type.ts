@@ -10,9 +10,6 @@ export class Benefit {
   taxReturnId?: number;
 
   @Field()
-  taxpayerId: string;
-
-  @Field()
   providerName: string;
 
   @Field()
@@ -23,9 +20,6 @@ export class Benefit {
 
   @Field(() => Float)
   amount: number;
-
-  @Field(() => Int)
-  taxYear: number;
 
   @Field()
   createdAt: Date;
