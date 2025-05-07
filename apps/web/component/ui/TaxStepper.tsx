@@ -50,12 +50,27 @@ type Asset = {
   realEstate?: {
     address: string
     propertyValue: number
-    propertyId: string
+    id: string
   }
   vehicle?: {
     registrationNumber: string
     purchasePrice: number
     purchaseYear?: number
+  }
+}
+
+type Debt = {
+  id: string
+  debtType: string
+  housingLoan?: {
+    interestExpenses: number
+    lenderName: string
+    loanDate: string
+  }
+  otherDebt?: {
+    interestExpenses: number
+    creditorName: string
+    debtType: string
   }
 }
 
@@ -165,6 +180,28 @@ const GET_ASSETS = gql`
   }
 `
 
+const GET_DEBTS = gql`
+  query GetDebts($taxYear: Int!) {
+    debts(taxYear: $taxYear) {
+      data {
+        id
+        debtType
+        housingLoan {
+          interestExpenses
+          lenderName
+          loanDate
+        }
+        otherDebt {
+          interestExpenses
+          creditorName
+          debtType
+        }
+      }
+      totalCount
+    }
+  }
+`
+
 const GET_TAX_REPORT_DETAILED = gql`
   query GetTaxReportDetailed($id: Int!) {
     taxReportDetailed(id: $id) {
@@ -217,7 +254,7 @@ const TaxStepper = () => {
   })
 
   // Get benefits data
-  const { data: benefitsData } = useQuery(GET_BENEFITS, {
+  const { data: benefitsData, loading: benefitsLoading, error: benefitsError } = useQuery(GET_BENEFITS, {
     variables: {
       taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
     },
@@ -232,6 +269,14 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.taxYear
   })
 
+  // Get debts data
+  const { data: debtsData, loading: debtsLoading, error: debtsError } = useQuery(GET_DEBTS, {
+    variables: {
+      taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
+    },
+    skip: !taxReportsData?.taxReports?.data[0]?.taxYear
+  })
+
   // Get detailed data for the first tax report if available
   const { data: detailedData } = useQuery(GET_TAX_REPORT_DETAILED, {
     variables: {
@@ -240,7 +285,7 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.id
   })
 
-  if (loading || assetsLoading) return <div>Loading...</div>
+  if (loading || assetsLoading || benefitsLoading || debtsLoading) return <div>Loading...</div>
   if (error) {
     console.error('Error fetching tax reports:', error)
     return <div>Error loading tax reports</div>
@@ -249,10 +294,20 @@ const TaxStepper = () => {
     console.error('Error fetching assets:', assetsError)
     return <div>Error loading assets</div>
   }
+  if (benefitsError) {
+    console.error('Error fetching benefits:', benefitsError)
+    return <div>Error loading benefits</div>
+  }
+  if (debtsError) {
+    console.error('Error fetching debts:', debtsError)
+    return <div>Error loading debts</div>
+  }
 
   console.log('Tax Year:', taxReportsData?.taxReports?.data[0]?.taxYear)
   console.log('Raw Assets Data:', assetsData)
+  console.log('Raw Debts Data:', debtsData)
   console.log('Assets Data Structure:', assetsData?.assets?.data)
+  console.log('Debts Data Structure:', debtsData?.debts?.data)
   console.log('Detailed Data:', detailedData)
   console.log('Benefits Data:', benefitsData)
 
@@ -318,11 +373,54 @@ const TaxStepper = () => {
     }
   }
 
+  // Helper function to map debts to interest expenses
+  const mapDebtsToInterestExpenses = (debts: any[] | undefined) => {
+    console.log('Mapping debts:', debts)
+    if (!debts || !Array.isArray(debts)) {
+      console.log('No debts or invalid debts array')
+      return [{
+        lánshluti: 'Húsnæðislán',
+        vextir: '',
+        dagsetning: ''
+      }]
+    }
+
+    const interestExpenses = debts.map(debt => {
+      if (debt.debtType === 'HOUSING_LOAN' && debt.housingLoan) {
+        return {
+          lánshluti: 'Húsnæðislán',
+          vextir: debt.housingLoan.interestExpenses.toString(),
+          dagsetning: debt.housingLoan.loanDate
+        }
+      } else if (debt.debtType === 'OTHER_DEBT' && debt.otherDebt) {
+        return {
+          lánshluti: debt.otherDebt.debtType === 'CAR_LOAN' ? 'Bílalán' : 'Persónulán',
+          vextir: debt.otherDebt.interestExpenses.toString(),
+          dagsetning: new Date().toISOString().split('T')[0] // Default to current date if not available
+        }
+      }
+      return {
+        lánshluti: 'Húsnæðislán',
+        vextir: '',
+        dagsetning: ''
+      }
+    })
+
+    console.log('Mapped interest expenses:', interestExpenses)
+    return interestExpenses.length > 0 ? interestExpenses : [{
+      lánshluti: 'Húsnæðislán',
+      vextir: '',
+      dagsetning: ''
+    }]
+  }
+
   const subsidyItems = mapBenefitsToSubsidies(benefitsData?.benefits?.data)
   const pensionItems = mapBenefitsToPensions(benefitsData?.benefits?.data)
   const mappedAssetsData = mapAssetsToFormData(assetsData?.assets?.data)
+  const mappedDebtsData = mapDebtsToInterestExpenses(debtsData?.debts?.data)
 
   console.log('Final mapped assets data:', mappedAssetsData)
+  console.log('Final mapped debts data:', mappedDebtsData)
 
   const handleNext = (data: any) => {
     let newFormData = { ...formData }
@@ -437,7 +535,9 @@ const TaxStepper = () => {
       content = (
         <InterestExpensesForm
           onNext={handleNext}
-          initialData={formData[4]?.[0]}
+          initialData={{
+            interestExpenses: mappedDebtsData
+          }}
           onBack={handleBack}
         />
       )
