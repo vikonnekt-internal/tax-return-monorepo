@@ -1,19 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import NextSubmit from '../component/ui/NextSubmit'
 import { Box } from '../component/Box/Box'
-import { Icon } from '../component/IconRC/Icon'
-import { GridRow } from '../component/Grid/GridRow/GridRow'
-import { GridColumn } from '../component/Grid/GridColumn/GridColumn'
-import { Select } from '../component/Select/Select'
-import { Input } from '../component/Input/Input'
 import { Divider } from '../component/Divider/Divider'
+import { GridColumn } from '../component/Grid/GridColumn/GridColumn'
+import { GridRow } from '../component/Grid/GridRow/GridRow'
+import { Icon } from '../component/IconRC/Icon'
+import { Input } from '../component/Input/Input'
+import { Select } from '../component/Select/Select'
 import { Text } from '../component/Text/Text'
+import NextSubmit from '../component/ui/NextSubmit'
 
-// Define the validation schema using Zod
 const incomeItemSchema = z.object({
   source: z
     .string()
@@ -45,7 +44,6 @@ const formSchema = z.object({
   pensionItems: z.array(pensionItemSchema)
 })
 
-// Define the form data type
 type FormData = z.infer<typeof formSchema>
 
 interface RevenueFormProps {
@@ -59,25 +57,19 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
   initialData,
   onBack,
 }) => {
+
   const {
     control,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      incomeItems: [
-        { source: 'Norðurljós Software ehf', amount: '9.360.000' },
-        { source: 'Mús & Merki ehf.', amount: '900.000' },
-      ],
-      subsidyItems: [{ type: 'Ferðaskrifstofan', amount: '900.000' }],
-      pensionItems: [
-        { source: 'VR', amount: '130.000' },
-        { source: 'Norðurljós Software ehf', amount: '75.000' },
-      ]
+      incomeItems: [{ source: '', amount: '' }],
+      subsidyItems: [],
+      pensionItems: [],
     },
-  })
+  });
 
   const { fields: incomeFields, append: appendIncome } = useFieldArray({
     control,
@@ -119,201 +111,213 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
 
   return (
     <Box>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Box marginBottom={4}>
-          <Text variant="h3" as="h2">
-            Launatekjur og starfstengdar greiðslur
-          </Text>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box marginBottom={4}>
+            <Text variant="h3" as="h2">
+              Launatekjur og starfstengdar greiðslur
+            </Text>
 
-          {incomeFields.map((field, index) => (
-            <Box key={field.id} marginY={2}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Controller
-                    name={`incomeItems.${index}.source`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Tekjur frá"
-                        placeholder="Nafn fyrirtækis eða stofnunar"
-                        hasError={!!errors.incomeItems?.[index]?.source}
-                        errorMessage={
-                          errors.incomeItems?.[index]?.source?.message
-                        }
-                        required
-                      />
-                    )}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Controller
-                    name={`incomeItems.${index}.amount`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Upphæð kr."
-                        placeholder="0"
-                        hasError={!!errors.incomeItems?.[index]?.amount}
-                        errorMessage={
-                          errors.incomeItems?.[index]?.amount?.message
-                        }
-                        required
-                      />
-                    )}
-                  />
-                </GridColumn>
-              </GridRow>
+            {incomeFields.map((field, index) => (
+              <Box key={field.id} marginY={2}>
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <Controller
+                      name={`incomeItems.${index}.source`}
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          label="Tekjur frá"
+                          placeholder="Nafn fyrirtækis eða stofnunar"
+                          hasError={!!errors.incomeItems?.[index]?.source}
+                          errorMessage={
+                            errors.incomeItems?.[index]?.source?.message
+                          }
+                          required
+                        />
+                      )}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '6/12']}>
+                    <Controller
+                      name={`incomeItems.${index}.amount`}
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          label="Upphæð kr."
+                          placeholder="0"
+                          hasError={!!errors.incomeItems?.[index]?.amount}
+                          errorMessage={
+                            errors.incomeItems?.[index]?.amount?.message
+                          }
+                          required
+                        />
+                      )}
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            ))}
+
+            <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+              <span
+                onClick={() => appendIncome({ source: '', amount: '' })}
+                className='flex gap-2 items-center'
+              >
+                <Icon type='outline' icon='add' color='blue400' />
+                <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
+              </span>
             </Box>
-          ))}
-
-          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-            <span
-              onClick={() => appendIncome({ source: '', amount: '' })}
-              className='flex gap-2 items-center'
-            >
-              <Icon type='outline' icon='add' color='blue400' />
-              <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
-            </span>
           </Box>
-        </Box>
 
-        <Divider />
+          <Divider />
 
-        <Box marginY={4}>
-          <Text variant="h3" as="h2">
-            Ökutækjastyrkur. Dagpeningar. Hlunnindi
-          </Text>
+          <Box marginY={4}>
+            <Text variant="h3" as="h2">
+              Ökutækjastyrkur. Dagpeningar. Hlunnindi
+            </Text>
 
-          {subsidyFields.map((field, index) => (
-            <Box key={field.id} marginY={2}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Controller
-                    name={`subsidyItems.${index}.type`}
-                    control={control}
-                    render={({ field: { onChange, value, ...field } }) => (
-                      <Select
-                        {...field}
-                        label="Tegund"
-                        options={subsidyOptions}
-                        placeholder="Veldu tegund"
-                        hasError={!!errors.subsidyItems?.[index]?.type}
-                        errorMessage={
-                          errors.subsidyItems?.[index]?.type?.message
-                        }
-                        value={
-                          subsidyOptions.find(
-                            (option) => option.value === value,
-                          ) || null
-                        }
-                        onChange={(option) => onChange(option?.value || '')}
+            {subsidyFields.length > 0 ? (
+              subsidyFields.map((field, index) => (
+                <Box key={field.id} marginY={2}>
+                  <GridRow>
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <Controller
+                        name={`subsidyItems.${index}.type`}
+                        control={control}
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <Select
+                            {...field}
+                            label="Tegund"
+                            options={subsidyOptions}
+                            placeholder="Veldu tegund"
+                            hasError={!!errors.subsidyItems?.[index]?.type}
+                            errorMessage={
+                              (errors.subsidyItems?.[index]?.type as any)?.message || ''
+                            }
+                            value={
+                              subsidyOptions.find(
+                                (option) => option.value === value,
+                              ) || null
+                            }
+                            onChange={(option) => onChange(option?.value || '')}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Controller
-                    name={`subsidyItems.${index}.amount`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Upphæð kr."
-                        placeholder="0"
-                        hasError={!!errors.subsidyItems?.[index]?.amount}
-                        errorMessage={
-                          errors.subsidyItems?.[index]?.amount?.message
-                        }
-                        required
+                    </GridColumn>
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <Controller
+                        name={`subsidyItems.${index}.amount`}
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            {...field}
+                            label="Upphæð kr."
+                            placeholder="0"
+                            hasError={!!errors.subsidyItems?.[index]?.amount}
+                            errorMessage={
+                              errors.subsidyItems?.[index]?.amount?.message
+                            }
+                            required
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </GridColumn>
-              </GridRow>
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+              ))
+            ) : (
+              <Box marginY={2}>
+                <Text color="dark400">Engir styrkir eða hlunnindi skráð</Text>
+              </Box>
+            )}
+
+            <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+              <span
+                onClick={() => appendSubsidy({ type: '', amount: '' })}
+                className='flex gap-2 items-center'
+              >
+                <Icon type='outline' icon='add' color='blue400' />
+                <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
+              </span>
             </Box>
-          ))}
-
-          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-            <span
-              onClick={() => appendSubsidy({ type: '', amount: '' })}
-              className='flex gap-2 items-center'
-            >
-              <Icon type='outline' icon='add' color='blue400' />
-              <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
-            </span>
           </Box>
-        </Box>
 
-        <Divider />
+          <Divider />
 
-        <Box marginY={4}>
-          <Text variant="h3" as="h2">
-            Lífeyrisgreiðslur. Greiðslur frá Tryggingastofnun. Aðrar bótagreiðslur, styrkir o.fl.
-          </Text>
+          <Box marginY={4}>
+            <Text variant="h3" as="h2">
+              Lífeyrisgreiðslur. Greiðslur frá Tryggingastofnun. Aðrar bótagreiðslur, styrkir o.fl.
+            </Text>
 
-          {pensionFields.map((field, index) => (
-            <Box key={field.id} marginY={2}>
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Controller
-                    name={`pensionItems.${index}.source`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Greiðslur frá"
-                        placeholder="Nafn stofnunar eða samtaka"
-                        hasError={!!errors.pensionItems?.[index]?.source}
-                        errorMessage={
-                          errors.pensionItems?.[index]?.source?.message
-                        }
-                        required
+            {pensionFields.length > 0 ? (
+              pensionFields.map((field, index) => (
+                <Box key={field.id} marginY={2}>
+                  <GridRow>
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <Controller
+                        name={`pensionItems.${index}.source`}
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            {...field}
+                            label="Greiðslur frá"
+                            placeholder="Nafn stofnunar eða samtaka"
+                            hasError={!!errors.pensionItems?.[index]?.source}
+                            errorMessage={
+                              errors.pensionItems?.[index]?.source?.message
+                            }
+                            required
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </GridColumn>
-                <GridColumn span={['12/12', '12/12', '6/12']}>
-                  <Controller
-                    name={`pensionItems.${index}.amount`}
-                    control={control}
-                    render={({ field }) => (
-                      <Input
-                        {...field}
-                        label="Upphæð kr."
-                        placeholder="0"
-                        hasError={!!errors.pensionItems?.[index]?.amount}
-                        errorMessage={
-                          errors.pensionItems?.[index]?.amount?.message
-                        }
-                        required
+                    </GridColumn>
+                    <GridColumn span={['12/12', '12/12', '6/12']}>
+                      <Controller
+                        name={`pensionItems.${index}.amount`}
+                        control={control}
+                        render={({ field }) => (
+                          <Input
+                            {...field}
+                            label="Upphæð kr."
+                            placeholder="0"
+                            hasError={!!errors.pensionItems?.[index]?.amount}
+                            errorMessage={
+                              errors.pensionItems?.[index]?.amount?.message
+                            }
+                            required
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </GridColumn>
-              </GridRow>
+                    </GridColumn>
+                  </GridRow>
+                </Box>
+              ))
+            ) : (
+              <Box marginY={2}>
+                <Text color="dark400">Engar lífeyrisgreiðslur eða styrkir skráðir</Text>
+              </Box>
+            )}
+
+            <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+              <span
+                onClick={() => appendPension({ source: '', amount: '' })}
+                className='flex gap-2 items-center'
+              >
+                <Icon type='outline' icon='add' color='blue400' />
+                <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
+              </span>
             </Box>
-          ))}
-
-          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-            <span
-              onClick={() => appendPension({ source: '', amount: '' })}
-              className='flex gap-2 items-center'
-            >
-              <Icon type='outline' icon='add' color='blue400' />
-              <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
-            </span>
           </Box>
-        </Box>
 
-        <Box marginTop={4}>
-          <NextSubmit
-            handleBack={onBack || (() => { })}
-            handleNext={handleSubmit(onSubmit)}
-          />
-        </Box>
-      </form>
+          <Box marginTop={4}>
+            <NextSubmit
+              handleBack={onBack || (() => { })}
+              handleNext={handleSubmit(onSubmit)}
+            />
+          </Box>
+        </form>
     </Box>
   )
 }

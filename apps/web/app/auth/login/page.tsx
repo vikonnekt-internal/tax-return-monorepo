@@ -1,7 +1,7 @@
-import AuthBottom from "apps/return-tax/src/component/ui/AuthBottom"
-import AuthBox from "apps/return-tax/src/component/ui/AuthBox"
-import AuthWays from "apps/return-tax/src/component/ui/AuthWays"
-import LoginForm from "apps/return-tax/src/module/LoginForm"
+import AuthBottom from "../../../component/ui/AuthBottom"
+import AuthBox from "../../../component/ui/AuthBox"
+import AuthWays from "../../../component/ui/AuthWays"
+import LoginForm from "../../../module/LoginForm"
 
 const LoginPage = () => {
   return (

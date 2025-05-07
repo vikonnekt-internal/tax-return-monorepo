@@ -8,6 +8,7 @@ import { Input } from "../component/Input/Input";
 import { Text } from "../component/Text/Text";
 import { Stack } from "../component/Stack/Stack";
 import NextSubmit from "../component/ui/NextSubmit";
+import { useQuery, gql } from '@apollo/client';
 
 const formSchema = z.object({
   nafn: z
@@ -35,11 +36,13 @@ interface DataCollectionFormProps {
   onBack?: () => void;
 }
 
+
 const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
   onNext,
   initialData,
   onBack,
 }) => {
+
   const {
     control,
     handleSubmit,
@@ -49,12 +52,13 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nafn: initialData?.nafn || "",
-      kennitala: initialData?.kennitala || "",
-      simanumer: initialData?.simanumer || "",
-      netfang: initialData?.netfang || "",
+      kennitala: initialData?.kennitala  || "",
+      simanumer: initialData?.simanumer  || "",
+      netfang: initialData?.netfang  || "",
       heimilisfang: initialData?.heimilisfang || "",
     },
   });
+
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -73,7 +77,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
     }
   };
 
-  return (
+  const formContent = (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack space={3}>
@@ -169,12 +173,15 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
             <NextSubmit
               handleBack={onBack || (() => {})}
               handleNext={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
             />
           </Box>
         </Stack>
       </form>
     </div>
   );
+
+  return formContent;
 };
 
 export default DataCollectionForm;
