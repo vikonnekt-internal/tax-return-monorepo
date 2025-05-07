@@ -4,6 +4,7 @@ import { GridRow } from "../component/Grid/GridRow/GridRow";
 import { GridColumn } from "../component/Grid/GridColumn/GridColumn";
 import { Text } from "../component/Text/Text";
 import { Button } from "../component/Button/Button";
+import { Divider } from "../component/Divider/Divider";
 
 interface StepperResultProps {
   data: any;
@@ -18,375 +19,349 @@ const StepperResult: React.FC<StepperResultProps> = ({ data, onEdit }) => {
   const interest = data[4]?.[0] || {};
   const debts = data[4]?.[1] || {};
 
-  return (
-    <Box>
-      {/* Personal Info */}
+  const hasPersonalData = personal.nafn || personal.kennitala || personal.heimilisfang || personal.netfang || personal.simanumer;
+  const hasRevenueData = revenue.incomeItems?.length > 0 || revenue.subsidyItems?.length > 0 || revenue.pensionItems?.length > 0;
+  const hasAssetsData = assets.realEstate?.length > 0 || assets.vehicles?.length > 0;
+  const hasInterestData = interest.interestExpenses?.length > 0;
+  const hasDebtsData = debts.debtExpenses?.length > 0;
+
+  const SectionHeader = ({ title, subtitle, onEdit }: { title: string; subtitle: string; onEdit?: () => void }) => (
+    <Box marginBottom={4}>
       <Box
-        padding={4}
-        background="blue100"
-        borderRadius="large"
-        marginBottom={4}
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="center"
+        marginBottom={2}
       >
-        <GridRow>
-          <GridColumn span={["12/12", "6/12", "6/12"]}>
-            <Text fontWeight="semiBold">Nafn</Text>
-            <Text>{personal.nafn}</Text>
-          </GridColumn>
-          <GridColumn span={["12/12", "6/12", "6/12"]}>
-            <Text fontWeight="semiBold">Kennitala</Text>
-            <Text>{personal.kennitala}</Text>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={["12/12", "6/12", "6/12"]}>
-            <Text fontWeight="semiBold">Heimilisfang</Text>
-            <Text>{personal.heimilisfang}</Text>
-          </GridColumn>
-          <GridColumn span={["12/12", "6/12", "6/12"]}>
-            <Text fontWeight="semiBold">Netfang</Text>
-            <Text>{personal.netfang}</Text>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={["12/12", "6/12", "6/12"]}>
-            <Text fontWeight="semiBold">Símanúmer</Text>
-            <Text>{personal.simanumer}</Text>
-          </GridColumn>
-          <GridColumn span={["12/12", "6/12", "6/12"]}>
-            <Box display="flex" justifyContent="flexEnd" height="full">
-              <Button
-                variant="ghost"
-                size="small"
-                icon="pencil"
-                iconType="outline"
-                onClick={() => onEdit?.("personal")}
-              >
-                Breyta
-              </Button>
-            </Box>
-          </GridColumn>
-        </GridRow>
+        <Box>
+          <Text variant="h3" as="h2" marginBottom={1}>
+            {title}
+          </Text>
+          <Text color="blue400">{subtitle}</Text>
+        </Box>
+        {onEdit && (
+          <Button
+            variant="ghost"
+            size="small"
+            icon="pencil"
+            iconType="outline"
+            onClick={onEdit}
+          >
+            Breyta
+          </Button>
+        )}
       </Box>
+      <Box marginY={2}>
+        <Divider />
+      </Box>
+    </Box>
+  );
+
+  const DataTable = ({ children }: { children: React.ReactNode }) => (
+    <Box
+      background="blue100"
+      borderRadius="large"
+      padding={4}
+      marginBottom={4}
+    >
+      {children}
+    </Box>
+  );
+
+  return (
+    <Box padding={4}>
+      {/* Personal Info */}
+      {hasPersonalData && (
+        <>
+          <SectionHeader
+            title="Persónuupplýsingar"
+            subtitle="Yfirlit yfir persónuupplýsingar"
+            onEdit={() => onEdit?.("personal")}
+          />
+          <DataTable>
+            <GridRow>
+              <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <Text fontWeight="semiBold" color="blue400">Nafn</Text>
+                <Text marginBottom={2}>{personal.nafn}</Text>
+              </GridColumn>
+              <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <Text fontWeight="semiBold" color="blue400">Kennitala</Text>
+                <Text marginBottom={2}>{personal.kennitala}</Text>
+              </GridColumn>
+            </GridRow>
+            <Box marginY={2}>
+              <Divider />
+            </Box>
+            <GridRow>
+              <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <Text fontWeight="semiBold" color="blue400">Heimilisfang</Text>
+                <Text marginBottom={2}>{personal.heimilisfang}</Text>
+              </GridColumn>
+              <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <Text fontWeight="semiBold" color="blue400">Netfang</Text>
+                <Text marginBottom={2}>{personal.netfang}</Text>
+              </GridColumn>
+            </GridRow>
+            <Box marginY={2}>
+              <Divider />
+            </Box>
+            <GridRow>
+              <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <Text fontWeight="semiBold" color="blue400">Símanúmer</Text>
+                <Text>{personal.simanumer}</Text>
+              </GridColumn>
+            </GridRow>
+          </DataTable>
+        </>
+      )}
 
       {/* Revenue Section */}
-      <Box marginBottom={4}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={2}
-        >
-          <Box>
-            <Text variant="h3" as="h2">
-              Tekjur ársins 2024
-            </Text>
-            <Text>Yfirlit yfir tekjur ársins 2024</Text>
-          </Box>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="pencil"
-            iconType="outline"
-            onClick={() => onEdit?.("revenue")}
-          >
-            Breyta
-          </Button>
-        </Box>
-        {/* Income Table */}
-        <Box
-          background="blue100"
-          borderRadius="large"
-          padding={2}
-          marginBottom={2}
-        >
-          <Text variant="h5" color="blue400" marginBottom={1}>
-            Launatekjur og starfstengdar greiðslur
-          </Text>
-          <GridRow>
-            <GridColumn span="8/12">
-              <Text fontWeight="semiBold">Tekjur frá</Text>
-            </GridColumn>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Upphæð kr.</Text>
-            </GridColumn>
-          </GridRow>
-          {revenue.incomeItems?.map((item: any, idx: number) => (
-            <GridRow key={idx}>
-              <GridColumn span="8/12">
-                <Text>{item.source}</Text>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <Text fontWeight="semiBold">{item.amount} kr.</Text>
-              </GridColumn>
-            </GridRow>
-          ))}
-        </Box>
-        {/* Subsidy Table */}
-        <Box background="blue100" borderRadius="large" padding={2}>
-          <Text variant="h5" color="blue400" marginBottom={1}>
-            Ökutækjastyrkur. Dagpeningar. Hlunnindi
-          </Text>
-          <GridRow>
-            <GridColumn span="8/12">
-              <Text fontWeight="semiBold">Tegund</Text>
-            </GridColumn>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Upphæð kr.</Text>
-            </GridColumn>
-          </GridRow>
-          {revenue.subsidyItems?.map((item: any, idx: number) => (
-            <GridRow key={idx}>
-              <GridColumn span="8/12">
-                <Text>{item.type}</Text>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <Text fontWeight="semiBold">{item.amount} kr.</Text>
-              </GridColumn>
-            </GridRow>
-          ))}
-        </Box>
-      </Box>
+      {hasRevenueData && (
+        <>
+          <SectionHeader
+            title="Tekjur ársins 2024"
+            subtitle="Yfirlit yfir tekjur ársins 2024"
+            onEdit={() => onEdit?.("revenue")}
+          />
+          
+          {/* Income Items */}
+          {revenue.incomeItems?.length > 0 && (
+            <DataTable>
+              <Text variant="h5" color="blue400" marginBottom={3}>Launatekjur og starfstengdar greiðslur</Text>
+              <GridRow>
+                <GridColumn span="8/12">
+                  <Text fontWeight="semiBold" color="blue400">Tekjur frá</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Upphæð kr.</Text>
+                </GridColumn>
+              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
+              {revenue.incomeItems.map((item: any, idx: number) => (
+                <GridRow key={idx} marginBottom={2}>
+                  <GridColumn span="8/12">
+                    <Text>{item.source}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text fontWeight="semiBold">{item.amount} kr.</Text>
+                  </GridColumn>
+                </GridRow>
+              ))}
+            </DataTable>
+          )}
+
+          {/* Subsidy Items */}
+          {revenue.subsidyItems?.length > 0 && (
+            <DataTable>
+              <Text variant="h5" color="blue400" marginBottom={3}>Ökutækjastyrkur. Dagpeningar. Hlunnindi</Text>
+              <GridRow>
+                <GridColumn span="8/12">
+                  <Text fontWeight="semiBold" color="blue400">Tegund</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Upphæð kr.</Text>
+                </GridColumn>
+              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
+              {revenue.subsidyItems.map((item: any, idx: number) => (
+                <GridRow key={idx} marginBottom={2}>
+                  <GridColumn span="8/12">
+                    <Text>{item.type}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text fontWeight="semiBold">{item.amount} kr.</Text>
+                  </GridColumn>
+                </GridRow>
+              ))}
+            </DataTable>
+          )}
+
+          {/* Pension Items */}
+          {revenue.pensionItems?.length > 0 && (
+            <DataTable>
+              <Text variant="h5" color="blue400" marginBottom={3}>Lífeyrisgreiðslur</Text>
+              <GridRow>
+                <GridColumn span="8/12">
+                  <Text fontWeight="semiBold" color="blue400">Heimild</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Upphæð kr.</Text>
+                </GridColumn>
+              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
+              {revenue.pensionItems.map((item: any, idx: number) => (
+                <GridRow key={idx} marginBottom={2}>
+                  <GridColumn span="8/12">
+                    <Text>{item.source}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text fontWeight="semiBold">{item.amount} kr.</Text>
+                  </GridColumn>
+                </GridRow>
+              ))}
+            </DataTable>
+          )}
+        </>
+      )}
 
       {/* Assets Section */}
-      <Box marginBottom={4}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={2}
-        >
-          <Box>
-            <Text variant="h3" as="h2">
-              Eignir ársins 2024
-            </Text>
-            <Text>Yfirlit yfir eignir ársins 2024</Text>
-          </Box>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="pencil"
-            iconType="outline"
-            onClick={() => onEdit?.("assets")}
-          >
-            Breyta
-          </Button>
-        </Box>
-        {/* Real Estate Table */}
-        <Box
-          background="blue100"
-          borderRadius="large"
-          padding={2}
-          marginBottom={2}
-        >
-          <Text variant="h5" color="blue400" marginBottom={1}>
-            Fasteignir
-          </Text>
-          <GridRow>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Fastanúmer</Text>
-            </GridColumn>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Heimilisfang</Text>
-            </GridColumn>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Fasteignamat</Text>
-            </GridColumn>
-          </GridRow>
-          {assets.realEstate?.map((item: any, idx: number) => (
-            <GridRow key={idx}>
-              <GridColumn span="4/12">
-                <Text>{item.fastanumer}</Text>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <Text>{item.heimilisfang}</Text>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <Text fontWeight="semiBold">{item.fasteign_mat} kr.</Text>
-              </GridColumn>
-            </GridRow>
-          ))}
-        </Box>
-        {/* Vehicles Table */}
-        <Box background="blue100" borderRadius="large" padding={2}>
-          <Text variant="h5" color="blue400" marginBottom={1}>
-            Bifreiðir
-          </Text>
-          <GridRow>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Númer</Text>
-            </GridColumn>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Kaupár</Text>
-            </GridColumn>
-            <GridColumn span="4/12">
-              <Text fontWeight="semiBold">Kaupverð</Text>
-            </GridColumn>
-          </GridRow>
-          {assets.vehicles?.map((item: any, idx: number) => (
-            <GridRow key={idx}>
-              <GridColumn span="4/12">
-                <Text>{item.numer}</Text>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <Text>{item.kaupar}</Text>
-              </GridColumn>
-              <GridColumn span="4/12">
-                <Text fontWeight="semiBold">{item.kaupverd} kr.</Text>
-              </GridColumn>
-            </GridRow>
-          ))}
-        </Box>
-      </Box>
+      {hasAssetsData && (
+        <>
+          <SectionHeader
+            title="Eignir ársins 2024"
+            subtitle="Yfirlit yfir eignir ársins 2024"
+            onEdit={() => onEdit?.("assets")}
+          />
+          
+          {/* Real Estate */}
+          {assets.realEstate?.length > 0 && (
+            <DataTable>
+              <Text variant="h5" color="blue400" marginBottom={3}>Fasteignir</Text>
+              <GridRow>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Fastanúmer</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Heimilisfang</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Fasteignamat</Text>
+                </GridColumn>
+              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
+              {assets.realEstate.map((item: any, idx: number) => (
+                <GridRow key={idx} marginBottom={2}>
+                  <GridColumn span="4/12">
+                    <Text>{item.fastanumer}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text>{item.heimilisfang}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text fontWeight="semiBold">{item.fasteign_mat} kr.</Text>
+                  </GridColumn>
+                </GridRow>
+              ))}
+            </DataTable>
+          )}
+
+          {/* Vehicles */}
+          {assets.vehicles?.length > 0 && (
+            <DataTable>
+              <Text variant="h5" color="blue400" marginBottom={3}>Bifreiðir</Text>
+              <GridRow>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Númer</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Kaupár</Text>
+                </GridColumn>
+                <GridColumn span="4/12">
+                  <Text fontWeight="semiBold" color="blue400">Kaupverð</Text>
+                </GridColumn>
+              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
+              {assets.vehicles.map((item: any, idx: number) => (
+                <GridRow key={idx} marginBottom={2}>
+                  <GridColumn span="4/12">
+                    <Text>{item.numer}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text>{item.kaupar}</Text>
+                  </GridColumn>
+                  <GridColumn span="4/12">
+                    <Text fontWeight="semiBold">{item.kaupverd} kr.</Text>
+                  </GridColumn>
+                </GridRow>
+              ))}
+            </DataTable>
+          )}
+        </>
+      )}
 
       {/* Interest Expenses Section */}
-      <Box marginBottom={4}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={2}
-        >
-          <Box>
-            <Text variant="h3" as="h2">
-              Vaxtagjöld vegna íbúðarhúsnæðis til eigin nota
-            </Text>
-            <Text>Yfirlit yfir skuldir og vaxtagjöld ársins 2024</Text>
-          </Box>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="pencil"
-            iconType="outline"
-            onClick={() => onEdit?.("interest")}
-          >
-            Breyta
-          </Button>
-        </Box>
-        {/* Key-value grid for interest expenses */}
-        {Array.isArray(interest.interestExpenses) &&
-          interest.interestExpenses.map((item: any, idx: number) => (
-            <Box
-              key={idx}
-              background="blue100"
-              borderRadius="large"
-              padding={2}
-              marginBottom={2}
-            >
+      {hasInterestData && (
+        <>
+          <SectionHeader
+            title="Vaxtagjöld vegna íbúðarhúsnæðis"
+            subtitle="Yfirlit yfir skuldir og vaxtagjöld ársins 2024"
+            onEdit={() => onEdit?.("interest")}
+          />
+          {interest.interestExpenses?.map((item: any, idx: number) => (
+            <DataTable key={idx}>
               <GridRow>
                 <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Kaupár</Text>
-                  <Text>{item.kaupár || "-"}</Text>
+                  <Text fontWeight="semiBold" color="blue400">Lánshluti</Text>
+                  <Text marginBottom={2}>{item.lánshluti}</Text>
                 </GridColumn>
                 <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Staðsetning íbúðarhúsnæðis</Text>
-                  <Text>{item.staðsetning || "-"}</Text>
+                  <Text fontWeight="semiBold" color="blue400">Vextir</Text>
+                  <Text marginBottom={2}>{item.vextir} kr.</Text>
                 </GridColumn>
               </GridRow>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Lánveitandi</Text>
-                  <Text>{item.lánveitandi || "-"}</Text>
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Kennitala lánveitanda</Text>
-                  <Text>{item.kennitala_lánveitanda || "-"}</Text>
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Lánsnúmer</Text>
-                  <Text>{item.lánsnúmer || "-"}</Text>
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Lántökudagur</Text>
-                  <Text>{item.lántökudagur || "-"}</Text>
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Lánstími í árum</Text>
-                  <Text>{item.lánstími || "-"}</Text>
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Heildargreiðslur ársins</Text>
-                  <Text>{item.heildargreiðslur || "-"}</Text>
-                </GridColumn>
-              </GridRow>
-              <GridRow>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Afborgun á nafnverði</Text>
-                  <Text>{item.afborgun || "-"}</Text>
-                </GridColumn>
-                <GridColumn span="6/12">
-                  <Text fontWeight="semiBold">Vaxtagjöld</Text>
-                  <Text>{item.vaxtagjöld || "-"}</Text>
-                </GridColumn>
-              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
               <GridRow>
                 <GridColumn span="12/12">
-                  <Text fontWeight="semiBold">Eftirstöðvar skulda</Text>
-                  <Text>{item.eftirstöðvar || "-"}</Text>
+                  <Text fontWeight="semiBold" color="blue400">Dagsetning</Text>
+                  <Text>{item.dagsetning}</Text>
                 </GridColumn>
               </GridRow>
-            </Box>
+            </DataTable>
           ))}
-      </Box>
+        </>
+      )}
 
       {/* Other Debts Section */}
-      <Box marginBottom={4}>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={2}
-        >
-          <Box>
-            <Text variant="h3" as="h2">
-              Aðrar skuldir og vaxtagjöld
-            </Text>
-            <Text>Yfirlit yfir eignir ársins 2024</Text>
-          </Box>
-          <Button
-            variant="ghost"
-            size="small"
-            icon="pencil"
-            iconType="outline"
-            onClick={() => onEdit?.("debts")}
-          >
-            Breyta
-          </Button>
-        </Box>
-        <Box background="blue100" borderRadius="large" padding={2}>
-          <GridRow>
-            <GridColumn span="6/12">
-              <Text fontWeight="semiBold">Skuld</Text>
-            </GridColumn>
-            <GridColumn span="3/12">
-              <Text fontWeight="semiBold">Vaxtagjöld</Text>
-            </GridColumn>
-            <GridColumn span="3/12">
-              <Text fontWeight="semiBold">Eftirstöðvar skulda</Text>
-            </GridColumn>
-          </GridRow>
-          {debts.debtExpenses?.map((item: any, idx: number) => (
-            <GridRow key={idx}>
+      {hasDebtsData && (
+        <>
+          <SectionHeader
+            title="Aðrar skuldir og vaxtagjöld"
+            subtitle="Yfirlit yfir aðrar skuldir og vaxtagjöld"
+            onEdit={() => onEdit?.("debts")}
+          />
+          <DataTable>
+            <GridRow>
               <GridColumn span="6/12">
-                <Text>{item.tegund}</Text>
-              </GridColumn>
-              <GridColumn span="3/12">
-                <Text fontWeight="semiBold">
-                  {item.vaxtagjöld || item.upphæð || "0 kr."}
-                </Text>
-              </GridColumn>
-              <GridColumn span="3/12">
-                <Text fontWeight="semiBold">
-                  {item.eftirstöðvar || "0 kr."}
-                </Text>
-              </GridColumn>
-            </GridRow>
-          ))}
-        </Box>
-      </Box>
+                <Text fontWeight="semiBold" color="blue400">Skuld</Text>
+                </GridColumn>
+                <GridColumn span="3/12">
+                  <Text fontWeight="semiBold" color="blue400">Vaxtagjöld</Text>
+                </GridColumn>
+                <GridColumn span="3/12">
+                  <Text fontWeight="semiBold" color="blue400">Eftirstöðvar skulda</Text>
+                </GridColumn>
+              </GridRow>
+              <Box marginY={2}>
+                <Divider />
+              </Box>
+              {debts.debtExpenses?.map((item: any, idx: number) => (
+                <GridRow key={idx} marginBottom={2}>
+                  <GridColumn span="6/12">
+                    <Text>{item.tegund}</Text>
+                  </GridColumn>
+                  <GridColumn span="3/12">
+                    <Text fontWeight="semiBold">{item.vaxtagjöld || item.upphæð || "0"} kr.</Text>
+                  </GridColumn>
+                  <GridColumn span="3/12">
+                    <Text fontWeight="semiBold">{item.eftirstöðvar || "0"} kr.</Text>
+                  </GridColumn>
+                </GridRow>
+              ))}
+            </DataTable>
+          </>
+        )}
     </Box>
   );
 };
