@@ -32,6 +32,18 @@ type IncomeSource = {
   dateModified: string
 }
 
+type Benefit = {
+  id: string
+  amount: number
+  benefitType: string
+  providerName: string
+  taxReturnId?: number
+  taxYear: number
+  taxpayerId: string
+  createdAt: string
+  updatedAt: string
+}
+
 const steps = [
   { name: 'Gagnaöflun' },
   { name: 'Samskiptaupplýsingar' },
@@ -99,6 +111,23 @@ const GET_TAX_REPORTS = gql`
   }
 `
 
+const GET_BENEFITS = gql`
+  query GetBenefits($taxYear: Int!) {
+    benefits(taxYear: $taxYear) {
+      data {
+        id
+        amount
+        benefitType
+        providerName
+        taxReturnId
+        taxYear
+        taxpayerId
+      }
+      totalCount
+    }
+  }
+`
+
 const GET_TAX_REPORT_DETAILED = gql`
   query GetTaxReportDetailed($id: Int!) {
     taxReportDetailed(id: $id) {
@@ -130,6 +159,10 @@ const GET_TAX_REPORT_DETAILED = gql`
         dateCreated
         dateModified
       }
+      dateCreated
+      dateModified
+      status
+      taxYear
     }
   }
 `
@@ -144,6 +177,14 @@ const TaxStepper = () => {
         limit: 10
       }
     }
+  })
+
+  // Get benefits data
+  const { data: benefitsData } = useQuery(GET_BENEFITS, {
+    variables: {
+      taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
+    },
+    skip: !taxReportsData?.taxReports?.data[0]?.taxYear
   })
 
   // Get detailed data for the first tax report if available
@@ -161,6 +202,30 @@ const TaxStepper = () => {
   }
 
   console.log('Detailed Data:', detailedData)
+  console.log('Benefits Data:', benefitsData)
+
+  // Helper function to map benefits to subsidy items
+  const mapBenefitsToSubsidies = (benefits: any[] | undefined) => {
+    if (!benefits) return []
+    
+    return benefits.map(benefit => ({
+      type: benefit.benefitType || 'Annað, hvað?',
+      amount: benefit.amount.toString()
+    }))
+  }
+
+  // Helper function to map benefits to pension items
+  const mapBenefitsToPensions = (benefits: any[] | undefined) => {
+    if (!benefits) return []
+    
+    return benefits.map(benefit => ({
+      source: benefit.providerName || 'Annað, hvað?',
+      amount: benefit.amount.toString()
+    }))
+  }
+
+  const subsidyItems = mapBenefitsToSubsidies(benefitsData?.benefits?.data)
+  const pensionItems = mapBenefitsToPensions(benefitsData?.benefits?.data)
 
   const handleNext = (data: any) => {
     let newFormData = { ...formData }
@@ -256,8 +321,8 @@ const TaxStepper = () => {
             source: source.sourceName,
             amount: source.amount.toString()
           })) || [{ source: '', amount: '' }],
-          subsidyItems: [],
-          pensionItems: []
+          subsidyItems: subsidyItems,
+          pensionItems: pensionItems
         }}
         onBack={handleBack}
       />
