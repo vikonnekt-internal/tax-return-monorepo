@@ -4,6 +4,7 @@ import { IncomeSourcesResolver } from './income-sources.resolver';
 import { IncomeSourcesService } from './income-sources.service';
 import { IncomeSourcesController } from './income-sources.controller';
 import { DatabaseModule } from '@tax/database';
+import PaginationService from '../common/pagination/pagination.service';
 
 @Module({
   imports: [DatabaseModule],
@@ -12,6 +13,7 @@ import { DatabaseModule } from '@tax/database';
     IncomeSourcesResolver,
     IncomeSourcesService,
     IncomeSourcesRepository,
+    PaginationService,
   ],
   exports: [IncomeSourcesService],
 })

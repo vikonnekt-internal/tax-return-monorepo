@@ -1,4 +1,5 @@
 import { Field, ID, Int, ObjectType, Float } from '@nestjs/graphql';
+import { PaginateResult } from '../common/pagination/pagination.output';
 
 @ObjectType({ description: 'income source' })
 export class IncomeSource {
@@ -32,3 +33,6 @@ export class IncomeSource {
   @Field()
   dateModified: Date;
 }
+
+@ObjectType()
+export class PaginatedIncomeSourcesType extends PaginateResult(IncomeSource) {}

@@ -75,6 +75,7 @@ export class UsersService {
         email: true,
         phone: true,
         role: true,
+        taxpayerId: true,
       },
     });
 

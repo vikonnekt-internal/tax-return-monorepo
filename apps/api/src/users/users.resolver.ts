@@ -1,5 +1,5 @@
 import { UsersService } from './users.service';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Query } from '@nestjs/graphql';
 import { User } from './users.type';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { UserEntity } from 'src/auth/entities/user-entities';

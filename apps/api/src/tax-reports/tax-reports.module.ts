@@ -4,6 +4,7 @@ import { TaxReportsResolver } from './tax-reports.resolver';
 import { TaxReportsRepository } from './tax-reports.repository';
 import { TaxReportsController } from './tax-reports.controller';
 import { DatabaseService } from '@tax/database';
+import PaginationService from '../common/pagination/pagination.service';
 
 @Module({
   providers: [
@@ -11,9 +12,9 @@ import { DatabaseService } from '@tax/database';
     TaxReportsResolver,
     TaxReportsRepository,
     DatabaseService,
+    PaginationService,
   ],
   controllers: [TaxReportsController],
   exports: [TaxReportsService],
 })
 export class TaxReportsModule {}
-

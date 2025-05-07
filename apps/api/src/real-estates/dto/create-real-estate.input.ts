@@ -21,9 +21,6 @@ export class CreateRealEstateInput extends createZodDto(
   @Field()
   propertyId!: string;
 
-  @Field()
-  taxpayerId!: string;
-
   @Field(() => Int, { nullable: true })
   taxReturnId?: number;
 
@@ -39,6 +36,6 @@ export class CreateRealEstateInput extends createZodDto(
   @Field(() => Int)
   taxYear!: number;
 
-  @Field(() => Number)
-  assetId!: number;
+  @Field(() => Number, { nullable: true })
+  assetId?: number;
 }

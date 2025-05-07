@@ -4,6 +4,7 @@ import { IncomeSource } from '../income-sources/income-sources.type';
 import { Asset } from '../assets/assets.type';
 import { Debt } from '../debts/debts.type';
 import { Benefit } from '../benefits/benefits.type';
+import { PaginateResult } from '../common/pagination/pagination.output';
 
 @ObjectType()
 export class TaxReportType {
@@ -67,3 +68,6 @@ export class TaxReportType {
   @Field(() => [Benefit], { nullable: true })
   benefits?: Benefit[];
 }
+
+@ObjectType()
+export class PaginatedTaxReportsType extends PaginateResult(TaxReportType) {}

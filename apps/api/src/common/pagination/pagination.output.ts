@@ -2,12 +2,16 @@ import { Type } from '@nestjs/common';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+import { PageInfo } from './page-info.type';
 
 const PaginationResponseSchema = z.object({
-  limit: z.number(),
-  skip: z.number(),
   totalCount: z.number(),
-  hasNext: z.boolean(),
+  pageInfo: z.object({
+    hasNextPage: z.boolean(),
+    hasPreviousPage: z.boolean().optional(),
+    startCursor: z.string().optional(),
+    endCursor: z.string(),
+  }),
 });
 
 export class PaginationResponseDto extends createZodDto(
@@ -15,36 +19,34 @@ export class PaginationResponseDto extends createZodDto(
 ) {}
 
 @ObjectType()
-export class PagingResultType {
-  @Field()
-  limit: number;
-
-  @Field()
-  skip: number;
-
+export class PaginationResultType {
   @Field()
   totalCount: number;
 
-  @Field()
-  hasNext: boolean;
+  @Field(() => PageInfo)
+  pageInfo: PageInfo;
 }
 
-export class PaginationResultType<T> {
+export class PaginationResult<T> {
   data: T[];
-  paging: PagingResultType;
+  pageInfo: PageInfo;
+  totalCount: number;
 }
 
 export function PaginateResult<T>(
   ItemType: Type<T>,
-): Type<PaginationResultType<T>> {
+): Type<PaginationResult<T>> {
   @ObjectType({ isAbstract: true })
   abstract class PageClass {
     @Field(() => [ItemType])
     data: T[];
 
-    @Field(() => PagingResultType)
-    paging: PagingResultType;
+    @Field(() => PageInfo)
+    pageInfo: PageInfo;
+
+    @Field()
+    totalCount: number;
   }
 
-  return PageClass as Type<PaginationResultType<T>>;
+  return PageClass as Type<PaginationResult<T>>;
 }

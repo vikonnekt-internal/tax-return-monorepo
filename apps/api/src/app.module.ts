@@ -48,7 +48,7 @@ dotenv.config();
           error.extensions?.statusCode,
           error.extensions?.originalError,
         );
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         let errors: any[] = [];
         if (error.extensions?.originalError) {
           errors = (error.extensions?.originalError as ZodError)?.errors;

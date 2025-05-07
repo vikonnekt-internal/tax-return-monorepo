@@ -5,7 +5,8 @@ import { createZodDto } from 'nestjs-zod';
 export const createBenefitSchema = z.object({
   taxpayerId: z
     .string()
-    .regex(/^\d{6}-?\d{4}$/, 'Invalid Icelandic ID format (kennitala)'),
+    .regex(/^\d{6}-?\d{4}$/, 'Invalid Icelandic ID format (kennitala)')
+    .optional(),
   taxReturnId: z.number().int().optional(),
   providerName: z.string().min(1),
   benefitType: z.string().min(1),
@@ -17,8 +18,8 @@ export class CreateBenefitDto extends createZodDto(createBenefitSchema) {}
 
 @InputType()
 export class CreateBenefitInput extends createZodDto(createBenefitSchema) {
-  @Field()
-  taxpayerId!: string;
+  @Field({ nullable: true })
+  taxpayerId?: string;
 
   @Field(() => Int, { nullable: true })
   taxReturnId?: number;

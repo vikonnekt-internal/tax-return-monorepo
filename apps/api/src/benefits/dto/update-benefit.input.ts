@@ -3,9 +3,12 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 import { createBenefitSchema } from './create-benefit.input';
 
-export const updateBenefitSchema = createBenefitSchema.partial().extend({
-  id: z.number().int().positive(),
-});
+export const updateBenefitSchema = createBenefitSchema
+  .extend({
+    id: z.number().positive(),
+  })
+  .partial()
+  .required({ id: true });
 
 export class UpdateBenefitDto extends createZodDto(updateBenefitSchema) {}
 

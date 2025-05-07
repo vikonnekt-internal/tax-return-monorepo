@@ -5,11 +5,11 @@ import { z } from 'zod';
 export const PaginationInputSchema = z
   .object({
     limit: z.number().max(50).default(10).optional(),
-    skip: z.number().default(0).optional(),
+    after: z.string().optional(),
+    before: z.string().optional(),
   })
   .default({
     limit: 10,
-    skip: 0,
   });
 
 export class PaginationInputDto extends createZodDto(PaginationInputSchema) {}
@@ -18,6 +18,10 @@ export class PaginationInputDto extends createZodDto(PaginationInputSchema) {}
 export class PaginationInput extends createZodDto(PaginationInputSchema) {
   @Field({ nullable: true })
   limit: number;
+
   @Field({ nullable: true })
-  skip: number;
+  after?: string;
+
+  @Field({ nullable: true })
+  before?: string;
 }

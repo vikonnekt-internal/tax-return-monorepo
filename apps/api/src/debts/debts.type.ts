@@ -1,4 +1,5 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { PaginateResult } from '../common/pagination/pagination.output';
 import { HousingLoan } from '../housing-loans/housing-loans.type';
 import { OtherDebt } from '../other-debts/other-debts.type';
 
@@ -14,16 +15,19 @@ export class Debt {
   taxReturnId?: number;
 
   @Field()
+  creditorName: string;
+
+  @Field()
   debtType: string;
 
   @Field(() => Int)
   taxYear: number;
 
   @Field()
-  dateCreated: Date;
+  createdAt: Date;
 
   @Field()
-  dateModified: Date;
+  updatedAt: Date;
 
   @Field(() => HousingLoan, { nullable: true })
   housingLoan?: HousingLoan;
@@ -31,3 +35,6 @@ export class Debt {
   @Field(() => OtherDebt, { nullable: true })
   otherDebt?: OtherDebt;
 }
+
+@ObjectType()
+export class PaginatedDebtsType extends PaginateResult(Debt) {}

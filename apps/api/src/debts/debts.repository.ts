@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '@tax/database';
 import { CreateDebtInput } from './dto/create-debt.input';
 import { UpdateDebtInput } from './dto/update-debt.input';
+import { PaginationInput } from '../common/pagination/pagination.input';
+import PaginationService from '../common/pagination/pagination.service';
+import { DebtTypeEnum } from './dto/debt-type.enum';
 
 @Injectable()
 export class DebtsRepository {
-  constructor(private readonly prisma: DatabaseService) {}
+  constructor(
+    private readonly prisma: DatabaseService,
+    private readonly paginationService: PaginationService,
+  ) {}
 
   async create(createDebtInput: CreateDebtInput) {
     const { debtType, housingLoan, otherDebt, ...debtData } = createDebtInput;
@@ -19,7 +25,7 @@ export class DebtsRepository {
     });
 
     // Based on debtType, create the specific debt type record
-    if (debtType === 'housing_loan' && housingLoan) {
+    if (debtType === DebtTypeEnum.HOUSING_LOAN && housingLoan) {
       await this.prisma.housingLoan.create({
         data: {
           lenderName: housingLoan.lenderName || '',
@@ -35,7 +41,7 @@ export class DebtsRepository {
           debtId: debt.id,
         },
       });
-    } else if (debtType === 'other_debt' && otherDebt) {
+    } else if (debtType === DebtTypeEnum.OTHER_DEBT && otherDebt) {
       await this.prisma.otherDebt.create({
         data: {
           debtType: otherDebt.debtType || '',
@@ -51,17 +57,94 @@ export class DebtsRepository {
     return this.findOne(debt.id);
   }
 
-  async findAll(params: { taxpayerId: string; taxYear: number }) {
+  async findAll(
+    params: { taxpayerId: string; taxYear: number },
+    paginationInput?: PaginationInput,
+  ) {
     const { taxpayerId, taxYear } = params;
-    return this.prisma.debt.findMany({
-      where: {
-        taxpayerId,
-        taxYear,
-      },
+    const filter = { taxpayerId, taxYear };
+
+    if (!paginationInput) {
+      const debts = await this.prisma.debt.findMany({
+        where: filter,
+        include: {
+          housingLoan: true,
+          otherDebt: true,
+        },
+        orderBy: { id: 'desc' },
+      });
+
+      return {
+        data: debts,
+        totalCount: debts.length,
+        pageInfo: {
+          hasNextPage: false,
+          endCursor: debts.length > 0 ? String(debts[debts.length - 1].id) : '',
+        },
+      };
+    }
+
+    const { limit = 10, after, before } = paginationInput;
+
+    // Configure cursor and pagination direction
+    let cursor: any = undefined;
+    let skip = 0;
+    let take = limit;
+
+    if (after) {
+      cursor = { id: this.paginationService.decodeCursor(after) };
+      skip = 1; // Skip the cursor item
+    } else if (before) {
+      cursor = { id: this.paginationService.decodeCursor(before) };
+      skip = 1;
+      take = -limit; // Take negative = take items before cursor
+    }
+
+    // Get data with pagination
+    const debts = await this.prisma.debt.findMany({
+      where: filter,
       include: {
         housingLoan: true,
         otherDebt: true,
       },
+      cursor: cursor || undefined,
+      skip: cursor ? skip : 0,
+      take,
+      orderBy: {
+        id: before ? 'desc' : 'asc', // Reverse sort when paginating backwards
+      },
+    });
+
+    // If we paginated backwards, we need to reverse the items to maintain the correct order
+    const orderedDebts = before ? [...debts].reverse() : debts;
+
+    // Get total count
+    const totalCount = await this.prisma.debt.count({ where: filter });
+
+    // Get page info for pagination
+    const pageInfoBase = await this.paginationService.paginate('debt', {
+      filter,
+      paging: paginationInput,
+    });
+
+    const pageInfo = {
+      ...pageInfoBase,
+      startCursor:
+        orderedDebts.length > 0
+          ? this.paginationService.generateCursor(orderedDebts[0].id)
+          : undefined,
+      endCursor:
+        orderedDebts.length > 0
+          ? this.paginationService.generateCursor(
+              orderedDebts[orderedDebts.length - 1].id,
+            )
+          : '',
+    };
+
+    return this.paginationService.createPaginationObject({
+      data: orderedDebts,
+      pageInfo,
+      totalCount,
     });
   }
 
@@ -85,7 +168,7 @@ export class DebtsRepository {
     });
 
     // Update the specific debt type data
-    if (debtType === 'housing_loan' && housingLoan) {
+    if (debtType === DebtTypeEnum.HOUSING_LOAN && housingLoan) {
       if (housingLoan.id) {
         await this.prisma.housingLoan.update({
           where: { id: housingLoan.id },
@@ -124,7 +207,7 @@ export class DebtsRepository {
           },
         });
       }
-    } else if (debtType === 'other_debt' && otherDebt) {
+    } else if (debtType === DebtTypeEnum.OTHER_DEBT && otherDebt) {
       if (otherDebt.id) {
         await this.prisma.otherDebt.update({
           where: { id: otherDebt.id },

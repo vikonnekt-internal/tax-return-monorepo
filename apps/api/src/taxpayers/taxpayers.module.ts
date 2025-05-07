@@ -1,12 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TaxpayersRepository } from './taxpayers.repository';
-import { TaxpayersResolver } from './taxpayers.resolver';
 import { TaxpayersService } from './taxpayers.service';
+import { TaxpayersResolver } from './taxpayers.resolver';
 import { DatabaseModule } from '@tax/database';
+import PaginationService from '../common/pagination/pagination.service';
 
 @Module({
   imports: [DatabaseModule],
-  providers: [TaxpayersResolver, TaxpayersService, TaxpayersRepository],
+  providers: [
+    TaxpayersRepository,
+    TaxpayersService,
+    TaxpayersResolver,
+    PaginationService,
+  ],
   exports: [TaxpayersService],
 })
 export class TaxpayersModule {}

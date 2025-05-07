@@ -3,9 +3,6 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 const CreateIncomeSourceSchema = z.object({
-  taxpayerId: z
-    .string()
-    .regex(/^\d{6}-?\d{4}$/, 'Invalid Icelandic ID format (kennitala)'),
   taxReturnId: z.number().int().optional(),
   sourceName: z.string().min(1),
   sourceIdNumber: z.string().optional(),
@@ -22,7 +19,6 @@ export class CreateIncomeSourceDto extends createZodDto(
 export class CreateIncomeSourceInput extends createZodDto(
   CreateIncomeSourceSchema,
 ) {
-  @Field()
   taxpayerId!: string;
 
   @Field(() => Int, { nullable: true })
