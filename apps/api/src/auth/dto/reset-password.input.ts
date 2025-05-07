@@ -13,6 +13,7 @@ const ResetPasswordSchema = z.object({
   token: z.string(),
 });
 
+@InputType()
 export class ResetPasswordInput extends createZodDto(ResetPasswordSchema) {
   @Field(() => String)
   password: string;
