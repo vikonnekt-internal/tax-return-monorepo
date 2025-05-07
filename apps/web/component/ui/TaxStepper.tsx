@@ -19,6 +19,19 @@ type FormDataMap = {
   [key: number]: any
 }
 
+type IncomeSource = {
+  id: string
+  sourceName: string
+  amount: number
+  incomeType: string
+  sourceIdNumber?: string
+  taxReturnId?: number
+  taxYear: number
+  taxpayerId: string
+  dateCreated: string
+  dateModified: string
+}
+
 const steps = [
   { name: 'Gagnaöflun' },
   { name: 'Samskiptaupplýsingar' },
@@ -90,6 +103,21 @@ const GET_TAX_REPORT_DETAILED = gql`
   query GetTaxReportDetailed($id: Int!) {
     taxReportDetailed(id: $id) {
       id
+      taxpayerId
+      taxpayer {
+        id
+        firstName
+        lastName
+        email
+        phoneNumber
+        fullAddress
+        city
+        postalCode
+        streetAddress
+        taxYear
+        dateCreated
+        dateModified
+      }
       incomeSources {
         id
         sourceName
@@ -101,83 +129,6 @@ const GET_TAX_REPORT_DETAILED = gql`
         taxpayerId
         dateCreated
         dateModified
-      }
-      assets {
-        id
-        assetType
-        taxReturnId
-        taxpayerId
-        dateCreated
-        dateModified
-        realEstate {
-          id
-          address
-          propertyValue
-          purchaseYear
-          taxpayerId
-          dateCreated
-          dateModified
-        }
-        vehicle {
-          id
-          purchasePrice
-          purchaseYear
-          registrationNumber
-          taxpayerId
-          dateCreated
-          dateModified
-        }
-      }
-      debts {
-        id
-        debtType
-        creditorName
-        taxReturnId
-        taxYear
-        taxpayerId
-        createdAt
-        updatedAt
-        housingLoan {
-          id
-          annualPayments
-          interestExpenses
-          lenderId
-          lenderName
-          loanDate
-          loanNumber
-          loanTermYears
-          principalRepayment
-          propertyAddress
-          remainingBalance
-          taxYear
-          taxpayerId
-          dateCreated
-          dateModified
-        }
-        otherDebt {
-          id
-          creditorName
-          debtIdentifier
-          debtType
-          interestExpenses
-          remainingBalance
-          taxYear
-          taxpayerId
-          dateCreated
-          dateModified
-        }
-      }
-      benefits {
-        id
-        amount
-        benefitType
-        description
-        providerName
-        taxReturnId
-        taxYear
-        taxpayerId
-        createdAt
-        updatedAt
       }
     }
   }
@@ -198,7 +149,7 @@ const TaxStepper = () => {
   // Get detailed data for the first tax report if available
   const { data: detailedData } = useQuery(GET_TAX_REPORT_DETAILED, {
     variables: {
-      id: taxReportsData?.taxReports?.data[0]?.id
+      id: taxReportsData?.taxReports?.data[0]?.id ? parseInt(taxReportsData.taxReports.data[0].id) : undefined
     },
     skip: !taxReportsData?.taxReports?.data[0]?.id
   })
@@ -209,8 +160,7 @@ const TaxStepper = () => {
     return <div>Error loading tax reports</div>
   }
 
-  console.log('Basic Tax Reports Data:', taxReportsData)
-  console.log('Detailed Tax Report Data:', detailedData)
+  console.log('Detailed Data:', detailedData)
 
   const handleNext = (data: any) => {
     let newFormData = { ...formData }
@@ -281,10 +231,19 @@ const TaxStepper = () => {
       <DataRetrievalConsent onNext={() => setStep(1)} onBack={handleBack} />
     )
   } else if (step === 1) {
+    console.log('Taxpayer Data for Form:', detailedData?.taxReportDetailed?.taxpayer)
     content = (
       <DataCollectionForm
         onNext={handleNext}
-        
+        initialData={{
+          nafn: detailedData?.taxReportDetailed?.taxpayer?.firstName 
+            ? `${detailedData.taxReportDetailed.taxpayer.firstName} ${detailedData.taxReportDetailed.taxpayer.lastName}`
+            : '',
+          kennitala: detailedData?.taxReportDetailed?.taxpayer?.id || '',
+          simanumer: detailedData?.taxReportDetailed?.taxpayer?.phoneNumber || '',
+          netfang: detailedData?.taxReportDetailed?.taxpayer?.email || '',
+          heimilisfang: detailedData?.taxReportDetailed?.taxpayer?.fullAddress || '',
+        }}
         onBack={handleBack}
       />
     )
@@ -292,6 +251,14 @@ const TaxStepper = () => {
     content = (
       <RevenueForm
         onNext={handleNext}
+        initialData={{
+          incomeItems: detailedData?.taxReportDetailed?.incomeSources?.map((source: IncomeSource) => ({
+            source: source.sourceName,
+            amount: source.amount.toString()
+          })) || [{ source: '', amount: '' }],
+          subsidyItems: [],
+          pensionItems: []
+        }}
         onBack={handleBack}
       />
     )
