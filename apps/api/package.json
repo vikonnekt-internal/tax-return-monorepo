@@ -17,7 +17,11 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e:tax-return": "jest --config ./test/jest-e2e.json tax-return-flow.e2e-spec.ts",
+    "test:connection": "node ./test/test-connection.js",
+    "test:e2e:run": "node ./scripts/run-e2e-tests.js",
+    "test:e2e:tax-return:run": "node ./scripts/run-e2e-tests.js --tax-return"
   },
   "dependencies": {
     "@anatine/zod-nestjs": "^2.0.10",
@@ -97,6 +101,13 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover",
+      "cobertura"
+    ],
     "testEnvironment": "node",
     "packageManager": "pnpm@9.0.0"
   }
