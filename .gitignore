@@ -55,7 +55,6 @@ build/
 eggs/
 *.egg-info/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -97,5 +96,4 @@ coverage.xml
 .pydevproject
 .settings
 extracted_articles/
-test/
 extracted_annexes/
