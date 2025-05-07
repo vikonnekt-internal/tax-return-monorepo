@@ -13,6 +13,7 @@ import StaticLayout from "../../component/layout/StaticLayout";
 import InfoIcon from "../../icons/InfoIcon";
 
 const InfoPage = () => {
+  
   return (
     <StaticLayout
       main={

@@ -4,13 +4,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.8",
     "@hookform/resolvers": "^5.0.1",
     "@rehooks/component-size": "^1.0.3",
     "@tailwindcss/postcss": "^4.1.5",
@@ -22,6 +23,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "csstype": "^3.1.3",
+    "graphql": "^16.11.0",
     "hypher": "^0.2.5",
     "lodash": "^4.17.21",
     "next": "^15.1.6",

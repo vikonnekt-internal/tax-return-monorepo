@@ -1,6 +1,6 @@
 {
   "name": "@tax/database",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Database services, Prisma setup, and related utilities",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
