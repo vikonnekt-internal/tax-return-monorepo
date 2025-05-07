@@ -1,0 +1,33 @@
+.input-container {
+  background: #f2f7ff;
+  border-radius: 8px;
+  border: 1px #ccdfff solid;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 34px;
+  word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  padding-top: 0.5rem;
+
+  &__input {
+    color: #9999b1;
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 34px;
+    word-wrap: break-word;
+    outline: none !important;
+  }
+
+  &__label {
+    color: #0061ff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 16px;
+    word-wrap: break-word;
+  }
+}
