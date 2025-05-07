@@ -1,0 +1,48 @@
+import { GovBenefit, Prisma } from "@prisma/client";
+
+export const govBenefit: GovBenefit[] = [
+  {
+    id: 1,
+    taxpayerId: "1234567890",
+    providerName: "Social Insurance Administration",
+    benefitType: "child_benefit",
+    amount: new Prisma.Decimal(380000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 2,
+    taxpayerId: "1234567890",
+    providerName: "Tax Authority",
+    benefitType: "interest_rebate",
+    amount: new Prisma.Decimal(250000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 3,
+    taxpayerId: "0987654321",
+    providerName: "Social Insurance Administration",
+    benefitType: "housing_benefit",
+    amount: new Prisma.Decimal(420000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 4,
+    taxpayerId: "0987654321",
+    providerName: "Municipality of Reykjavik",
+    benefitType: "special_support",
+    amount: new Prisma.Decimal(180000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+];

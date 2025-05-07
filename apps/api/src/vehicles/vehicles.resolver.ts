@@ -1,58 +1,62 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { VehiclesService } from './vehicles.service';
-import { Vehicle } from './vehicles.type';
+import { PaginatedVehiclesType, Vehicle } from './vehicles.type';
 import { CreateVehicleInput } from './dto/create-vehicle.input';
 import { UpdateVehicleInput } from './dto/update-vehicle.input';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
 import { Roles } from '../auth/role.decorator';
+import { CurrentUser } from '../auth/current-user.decorator';
+import { UserEntity } from '../auth/entities/user-entities';
+import { PaginationInput } from '../common/pagination/pagination.input';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Resolver(() => Vehicle)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin', 'user')
 export class VehiclesResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
   @Query(() => Vehicle)
-  @Roles('admin')
   async vehicle(@Args('id', { type: () => Int }) id: number) {
     return this.vehiclesService.getVehicle(id);
   }
 
-  @Query(() => [Vehicle])
-  @Roles('admin')
+  @Query(() => PaginatedVehiclesType)
   async vehicles(
-    @Args('taxYear', { nullable: true, type: () => Int }) taxYear?: number,
-    @Args('skip', { nullable: true, type: () => Int }) skip?: number,
-    @Args('take', { nullable: true, type: () => Int }) take?: number,
+    @CurrentUser() user: UserEntity,
+    @Args('taxYear', { type: () => Int }) taxYear: number,
+    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
   ) {
-    return this.vehiclesService.getAllVehicles({ taxYear, skip, take });
-  }
-
-  @Query(() => [Vehicle])
-  @Roles('admin')
-  async vehiclesByTaxpayer(
-    @Args('taxpayerId') taxpayerId: string,
-    @Args('taxYear', { nullable: true, type: () => Int }) taxYear?: number,
-  ) {
-    return this.vehiclesService.getVehiclesByTaxpayer(taxpayerId, taxYear);
+    return this.vehiclesService.getVehiclesByTaxpayer(
+      user.taxpayerId,
+      taxYear,
+      pagination,
+    );
   }
 
   @Mutation(() => Vehicle)
-  @Roles('admin')
-  async createVehicle(@Args('input') createVehicleInput: CreateVehicleInput) {
+  async createVehicle(
+    @Args('input') createVehicleInput: CreateVehicleInput,
+    @CurrentUser() user: UserEntity,
+  ) {
+    createVehicleInput.taxpayerId = user.taxpayerId;
     return this.vehiclesService.createVehicle(createVehicleInput);
   }
 
   @Mutation(() => Vehicle)
-  @Roles('admin')
-  async updateVehicle(@Args('input') updateVehicleInput: UpdateVehicleInput) {
-    return this.vehiclesService.updateVehicle(updateVehicleInput);
+  async updateVehicle(
+    @Args('input') updateVehicleInput: UpdateVehicleInput,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.vehiclesService.updateVehicle(updateVehicleInput, user);
   }
 
   @Mutation(() => Vehicle)
-  @Roles('admin')
-  async deleteVehicle(@Args('id', { type: () => Int }) id: number) {
-    return this.vehiclesService.deleteVehicle(id);
+  async deleteVehicle(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: UserEntity,
+  ) {
+    return this.vehiclesService.deleteVehicle(id, user);
   }
 }

@@ -46,7 +46,6 @@ export class PrismaClientExceptionFilter implements GqlExceptionFilter {
         //   },
         //   this.errorCodesStatusMapping.P2002,
         throw new DuplicateError(
-          // eslint-disable-next-line no-constant-binary-expression
           `${exception?.meta?.target?.[0]}` || 'already exists',
         );
       case 'P2025':

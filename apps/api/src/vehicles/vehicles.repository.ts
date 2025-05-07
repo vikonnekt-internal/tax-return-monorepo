@@ -48,10 +48,24 @@ export class VehiclesRepository {
     orderBy?: any;
     take?: number;
     skip?: number;
+    cursor?: any;
   }) {
     return await this.prisma.vehicle.findMany({
       ...params,
     });
+  }
+
+  async count(params: { where?: VehicleWhereInput }) {
+    const { where } = params;
+    try {
+      const count = await this.prisma.vehicle.count({
+        where,
+      });
+      return count;
+    } catch (error) {
+      console.error('Error counting vehicles:', error);
+      throw error;
+    }
   }
 
   async createVehicle(data: VehicleData) {

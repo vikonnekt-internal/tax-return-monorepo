@@ -29,6 +29,8 @@ model User {
   isVerified            Boolean   @default(false)
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @default(now()) @updatedAt
+  taxpayerId            String?   @unique
+  taxpayer              Taxpayer? @relation(fields: [taxpayerId], references: [id])
 
   // Relations
   taxReturns TaxReturn[]
@@ -86,6 +88,13 @@ model Taxpayer {
   debts         Debt[]
   benefits      Benefit[]
   taxReturns    TaxReturn[]
+  user          User?
+
+  // Government data relations
+  govIncomeSources GovIncomeSource[]
+  govAssets        GovAsset[]
+  govDebts         GovDebt[]
+  govBenefits      GovBenefit[]
 
   @@index([taxYear])
 }
@@ -238,4 +247,136 @@ model Benefit {
   @@index([taxpayerId])
   @@index([taxYear])
   @@index([taxReturnId])
+}
+
+// Government Data Sources - linked to taxpayers
+
+model GovIncomeSource {
+  id             Int      @id @default(autoincrement())
+  taxpayerId     String   @map("taxpayer_id")
+  sourceName     String
+  sourceIdNumber String?
+  incomeType     String
+  amount         Decimal  @db.Decimal(15, 2)
+  isActive       Boolean  @default(true)
+  taxYear        Int
+  dateCreated    DateTime @default(now())
+  dateModified   DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer Taxpayer @relation(fields: [taxpayerId], references: [id])
+
+  @@index([taxpayerId])
+  @@index([incomeType])
+  @@index([isActive])
+  @@index([taxYear])
+}
+
+model GovAsset {
+  id           Int      @id @default(autoincrement())
+  taxpayerId   String   @map("taxpayer_id")
+  assetType    String // "real_estate" or "vehicle"
+  isActive     Boolean  @default(true)
+  taxYear      Int
+  dateCreated  DateTime @default(now())
+  dateModified DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer Taxpayer @relation(fields: [taxpayerId], references: [id])
+
+  // Child asset relations (one-to-one)
+  govRealEstate GovRealEstate?
+  govVehicle    GovVehicle?
+
+  @@index([taxpayerId])
+  @@index([assetType])
+  @@index([isActive])
+  @@index([taxYear])
+}
+
+model GovRealEstate {
+  id            Int      @id @default(autoincrement())
+  assetId       Int      @unique // Link to parent GovAsset
+  propertyId    String
+  address       String
+  propertyValue Decimal  @db.Decimal(15, 2)
+  purchaseYear  Int?
+  govAsset      GovAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
+model GovVehicle {
+  id                 Int      @id @default(autoincrement())
+  assetId            Int      @unique // Link to parent GovAsset
+  registrationNumber String
+  purchaseYear       Int?
+  purchasePrice      Decimal  @db.Decimal(15, 2)
+  govAsset           GovAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
+model GovDebt {
+  id           Int      @id @default(autoincrement())
+  taxpayerId   String   @map("taxpayer_id")
+  debtType     String // "housing_loan" or "other_debt"
+  isActive     Boolean  @default(true)
+  taxYear      Int
+  dateCreated  DateTime @default(now())
+  dateModified DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer Taxpayer @relation(fields: [taxpayerId], references: [id])
+
+  // Child debt relations (one-to-one)
+  govHousingLoan GovHousingLoan?
+  govOtherDebt   GovOtherDebt?
+
+  @@index([taxpayerId])
+  @@index([debtType])
+  @@index([isActive])
+  @@index([taxYear])
+}
+
+model GovHousingLoan {
+  id                 Int     @id @default(autoincrement())
+  debtId             Int     @unique // Link to parent GovDebt
+  lenderName         String
+  lenderId           String?
+  loanNumber         String
+  propertyAddress    String
+  loanTermYears      Int?
+  annualPayments     Decimal @db.Decimal(15, 2)
+  principalRepayment Decimal @db.Decimal(15, 2)
+  interestExpenses   Decimal @db.Decimal(15, 2)
+  remainingBalance   Decimal @db.Decimal(15, 2)
+  govDebt            GovDebt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+}
+
+model GovOtherDebt {
+  id               Int     @id @default(autoincrement())
+  debtId           Int     @unique // Link to parent GovDebt
+  debtType         String
+  debtIdentifier   String?
+  creditorName     String
+  interestExpenses Decimal @db.Decimal(15, 2)
+  remainingBalance Decimal @db.Decimal(15, 2)
+  govDebt          GovDebt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+}
+
+model GovBenefit {
+  id           Int      @id @default(autoincrement())
+  taxpayerId   String   @map("taxpayer_id")
+  providerName String
+  benefitType  String
+  amount       Decimal  @db.Decimal(15, 2)
+  isActive     Boolean  @default(true)
+  taxYear      Int
+  dateCreated  DateTime @default(now())
+  dateModified DateTime @default(now()) @updatedAt
+
+  // Relations
+  taxpayer Taxpayer @relation(fields: [taxpayerId], references: [id])
+
+  @@index([taxpayerId])
+  @@index([benefitType])
+  @@index([isActive])
+  @@index([taxYear])
 }

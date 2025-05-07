@@ -12,20 +12,35 @@ import { debt } from "./debt";
 import { housingLoan } from "./housingLoan";
 import { otherDebt } from "./otherDebt";
 import { benefit } from "./benefit";
+import { govIncomeSource } from "./govIncomeSource";
+import { govAsset } from "./govAsset";
+import { govRealEstate } from "./govRealEstate";
+import { govVehicle } from "./govVehicle";
+import { govDebt } from "./govDebt";
+import { govHousingLoan } from "./govHousingLoan";
+import { govOtherDebt } from "./govOtherDebt";
+import { govBenefit } from "./govBenefit";
 import { PrismaModelName } from "../database.types";
-
-// CRITICAL ISSUE: There's no debt.ts file to create Debt parent records,
-// but housingLoan and otherDebt depend on these records through debtId.
-// Need to create a debt.ts file with records matching the debtId values
-// in housingLoan and otherDebt.
 
 // Correct seeding order based on schema.prisma relationships
 export const mocks = {
   // Independent base entities
-  user, // No foreign key dependencies
-  taxpayer, // No foreign key dependencies
+  taxpayer, // No foreign key dependencies - must be first
+
+  // Government data sources - depend on taxpayer
+  govIncomeSource, // Depends on taxpayer
+  govAsset, // Depends on taxpayer
+  govDebt, // Depends on taxpayer
+  govBenefit, // Depends on taxpayer
+
+  // Government child records
+  govRealEstate, // Depends on govAsset
+  govVehicle, // Depends on govAsset
+  govHousingLoan, // Depends on govDebt
+  govOtherDebt, // Depends on govDebt
 
   // First level of dependencies
+  user, // Depends on taxpayer
   taxReturn, // Depends on user and taxpayer
 
   // Second level that depend on taxpayer and optionally taxReturn
@@ -118,5 +133,13 @@ export {
   housingLoan,
   otherDebt,
   benefit,
+  govIncomeSource,
+  govAsset,
+  govRealEstate,
+  govVehicle,
+  govDebt,
+  govHousingLoan,
+  govOtherDebt,
+  govBenefit,
   mockEntities,
 };

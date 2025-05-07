@@ -1,9 +1,13 @@
-import { Field, ID, Int, ObjectType, Float } from '@nestjs/graphql';
+import { Field, Int, ObjectType, Float } from '@nestjs/graphql';
+import { PaginateResult } from '../common/pagination/pagination.output';
 
 @ObjectType()
 export class Benefit {
-  @Field(() => ID)
+  @Field(() => Int)
   id: number;
+
+  @Field(() => Int, { nullable: true })
+  taxReturnId?: number;
 
   @Field()
   taxpayerId: string;
@@ -14,6 +18,9 @@ export class Benefit {
   @Field()
   benefitType: string;
 
+  @Field()
+  description: string;
+
   @Field(() => Float)
   amount: number;
 
@@ -21,8 +28,11 @@ export class Benefit {
   taxYear: number;
 
   @Field()
-  dateCreated: Date;
+  createdAt: Date;
 
   @Field()
-  dateModified: Date;
+  updatedAt: Date;
 }
+
+@ObjectType()
+export class PaginatedBenefitsType extends PaginateResult(Benefit) {}

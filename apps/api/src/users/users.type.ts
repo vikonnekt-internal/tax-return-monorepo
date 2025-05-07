@@ -28,4 +28,7 @@ export class User {
 
   @Field({ nullable: true })
   profilePic?: string;
+
+  @Field({ nullable: true })
+  taxpayerId?: string;
 }

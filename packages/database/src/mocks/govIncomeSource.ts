@@ -1,0 +1,40 @@
+import { GovIncomeSource, Prisma } from "@prisma/client";
+
+export const govIncomeSource: GovIncomeSource[] = [
+  {
+    id: 1,
+    taxpayerId: "1234567890",
+    sourceName: "Government Employer",
+    sourceIdNumber: "GE12345",
+    incomeType: "salary",
+    amount: new Prisma.Decimal(5200000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 2,
+    taxpayerId: "1234567890",
+    sourceName: "National Pension Fund",
+    sourceIdNumber: "NPF54321",
+    incomeType: "pension",
+    amount: new Prisma.Decimal(1800000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 3,
+    taxpayerId: "0987654321",
+    sourceName: "Municipal Service",
+    sourceIdNumber: "MS98765",
+    incomeType: "salary",
+    amount: new Prisma.Decimal(4800000),
+    isActive: true,
+    taxYear: 2023,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+];

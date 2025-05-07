@@ -1,29 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AssetsRepository } from './assets.repository';
 import { CreateAssetInput } from './dto/create-asset.input';
 import { UpdateAssetInput } from './dto/update-asset.input';
+import { PaginationInput } from '../common/pagination/pagination.input';
 
 @Injectable()
 export class AssetsService {
   constructor(private readonly assetsRepository: AssetsRepository) {}
 
-  create(createAssetInput: CreateAssetInput) {
+  async create(createAssetInput: CreateAssetInput) {
     return this.assetsRepository.create(createAssetInput);
   }
 
-  findAll(taxpayerId: string, taxYear: number) {
-    return this.assetsRepository.findAll({ taxpayerId, taxYear });
+  async findAll(
+    taxpayerId: string,
+    taxYear: number,
+    paginationInput?: PaginationInput,
+  ) {
+    return this.assetsRepository.findAll(
+      { taxpayerId, taxYear },
+      paginationInput,
+    );
   }
 
-  findOne(id: number) {
-    return this.assetsRepository.findOne(id);
+  async findOne(id: number, taxpayerId: string) {
+    const asset = await this.assetsRepository.findOne(id);
+
+    if (!asset || asset.taxpayerId !== taxpayerId) {
+      throw new NotFoundException(
+        `Asset with ID ${id} not found for this user`,
+      );
+    }
+
+    return asset;
   }
 
-  update(id: number, updateAssetInput: UpdateAssetInput) {
+  async update(
+    id: number,
+    updateAssetInput: UpdateAssetInput,
+    taxpayerId: string,
+  ) {
+    // Verify the asset belongs to the user
+    await this.findOne(id, taxpayerId);
+
     return this.assetsRepository.update(id, updateAssetInput);
   }
 
-  remove(id: number) {
+  async remove(id: number, taxpayerId: string) {
+    // Verify the asset belongs to the user
+    await this.findOne(id, taxpayerId);
+
     return this.assetsRepository.remove(id);
   }
 }

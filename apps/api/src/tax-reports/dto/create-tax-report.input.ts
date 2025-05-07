@@ -3,13 +3,11 @@ import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
 
 const CreateTaxReportSchema = z.object({
-  taxpayerId: z.string().min(1, 'Taxpayer ID is required'),
   taxYear: z
     .number()
     .int()
     .min(2000)
     .max(new Date().getFullYear() + 1),
-  userId: z.number().int().optional(),
   status: z.string().optional().default('draft'),
   submissionDate: z.date().optional(),
   totalIncome: z.number().optional(),
@@ -25,14 +23,8 @@ export class CreateTaxReportDto extends createZodDto(CreateTaxReportSchema) {}
 
 @InputType()
 export class CreateTaxReportInput extends createZodDto(CreateTaxReportSchema) {
-  @Field()
-  taxpayerId!: string;
-
   @Field(() => Int)
   taxYear!: number;
-
-  @Field(() => Int, { nullable: true })
-  userId?: number;
 
   @Field({ defaultValue: 'draft', nullable: true })
   status!: string;

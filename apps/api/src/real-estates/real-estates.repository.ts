@@ -18,7 +18,7 @@ export class RealEstatesRepository {
     return this.prisma.realEstate.create({
       data: {
         ...realEstateOnly,
-        assetId,
+        asset: { connect: { id: assetId } },
       },
     });
   }

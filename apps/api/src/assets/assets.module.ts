@@ -4,11 +4,17 @@ import { AssetsController } from './assets.controller';
 import { AssetsResolver } from './assets.resolver';
 import { AssetsRepository } from './assets.repository';
 import { DatabaseModule } from '@tax/database';
+import PaginationService from '../common/pagination/pagination.service';
 
 @Module({
   imports: [DatabaseModule],
   controllers: [AssetsController],
-  providers: [AssetsResolver, AssetsService, AssetsRepository],
+  providers: [
+    AssetsService,
+    AssetsResolver,
+    AssetsRepository,
+    PaginationService,
+  ],
   exports: [AssetsService],
 })
 export class AssetsModule {}

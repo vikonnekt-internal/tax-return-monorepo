@@ -4,4 +4,5 @@ export class UserEntity {
   lastName: string;
   email: string;
   phone?: string;
+  taxpayerId: string;
 }

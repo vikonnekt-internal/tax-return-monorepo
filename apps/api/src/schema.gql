@@ -6,12 +6,13 @@ type Asset {
   assetType: String!
   dateCreated: DateTime!
   dateModified: DateTime!
-  id: Int!
+  id: ID!
   realEstate: RealEstate
+  realEstateId: Int
   taxReturnId: Int
-  taxYear: Int!
   taxpayerId: String!
   vehicle: Vehicle
+  vehicleId: Int
 }
 
 """The type of asset"""
@@ -23,12 +24,14 @@ enum AssetTypeEnum {
 type Benefit {
   amount: Float!
   benefitType: String!
-  dateCreated: DateTime!
-  dateModified: DateTime!
-  id: ID!
+  createdAt: DateTime!
+  description: String!
+  id: Int!
   providerName: String!
+  taxReturnId: Int
   taxYear: Int!
   taxpayerId: String!
+  updatedAt: DateTime!
 }
 
 input CreateAssetInput {
@@ -36,7 +39,6 @@ input CreateAssetInput {
   realEstate: CreateRealEstateInput
   taxReturnId: Int
   taxYear: Int!
-  taxpayerId: String!
   vehicle: CreateVehicleInput
 }
 
@@ -46,7 +48,7 @@ input CreateBenefitInput {
   providerName: String!
   taxReturnId: Int
   taxYear: Int!
-  taxpayerId: String!
+  taxpayerId: String
 }
 
 input CreateDebtInput {
@@ -81,7 +83,6 @@ input CreateIncomeSourceInput {
   sourceName: String!
   taxReturnId: Int
   taxYear: Int!
-  taxpayerId: String!
 }
 
 input CreateOtherDebtInput {
@@ -97,13 +98,12 @@ input CreateOtherDebtInput {
 
 input CreateRealEstateInput {
   address: String!
-  assetId: Float!
+  assetId: Float
   propertyId: String!
   propertyValue: Float!
   purchaseYear: Int
   taxReturnId: Int
   taxYear: Int!
-  taxpayerId: String!
 }
 
 input CreateTaxReportInput {
@@ -111,14 +111,12 @@ input CreateTaxReportInput {
   status: String = "draft"
   submissionDate: DateTime
   taxYear: Int!
-  taxpayerId: String!
   totalDeductions: Float
   totalIncome: Float
   totalOwed: Float
   totalRefund: Float
   totalTaxableIncome: Float
   totalTaxes: Float
-  userId: Int
 }
 
 input CreateTaxpayerInput {
@@ -140,7 +138,6 @@ input CreateVehicleInput {
   registrationNumber: String!
   taxReturnId: Int
   taxYear: Int!
-  taxpayerId: String!
 }
 
 """
@@ -149,8 +146,8 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Debt {
-  dateCreated: DateTime!
-  dateModified: DateTime!
+  createdAt: DateTime!
+  creditorName: String!
   debtType: String!
   housingLoan: HousingLoan
   id: Int!
@@ -158,6 +155,7 @@ type Debt {
   taxReturnId: Int
   taxYear: Int!
   taxpayerId: String!
+  updatedAt: DateTime!
 }
 
 """The type of debt"""
@@ -265,21 +263,69 @@ enum OtherDebtType {
   STUDENT_LOAN
 }
 
+type PageInfo {
+  endCursor: String!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean
+  startCursor: String
+}
+
+type PaginatedAssetsType {
+  data: [Asset!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type PaginatedBenefitsType {
+  data: [Benefit!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type PaginatedDebtsType {
+  data: [Debt!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type PaginatedIncomeSourcesType {
+  data: [IncomeSource!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type PaginatedTaxReportsType {
+  data: [TaxReportType!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+type PaginatedVehiclesType {
+  data: [Vehicle!]!
+  pageInfo: PageInfo!
+  totalCount: Float!
+}
+
+input PaginationInput {
+  after: String
+  before: String
+  limit: Float
+}
+
 type Query {
   asset(id: Int!): Asset!
-  assets(taxYear: Int!, taxpayerId: String!): [Asset!]!
+  assets(paginationInput: PaginationInput, taxYear: Int!): PaginatedAssetsType!
   benefit(id: Int!): Benefit!
-  benefits(taxYear: Int!, taxpayerId: String!): [Benefit!]!
+  benefits(paginationInput: PaginationInput, taxYear: Int!): PaginatedBenefitsType!
   debt(id: Int!): Debt!
-  debts(taxYear: Int!, taxpayerId: String!): [Debt!]!
-  findAll(incomeType: String, skip: Int, take: Int, taxReturnId: Int, taxYear: Int): [IncomeSource!]!
+  debts(paginationInput: PaginationInput, taxYear: Int!): PaginatedDebtsType!
   housingLoan(id: Int!): HousingLoan!
   housingLoans(skip: Int, take: Int, taxYear: Int): [HousingLoan!]!
   housingLoansByTaxpayer(taxYear: Int, taxpayerId: String!): [HousingLoan!]!
   incomeSource(id: Int!): IncomeSource!
-  incomeSources(incomeType: String, skip: Int, take: Int, taxYear: Int): [IncomeSource!]!
-  incomeSourcesByTaxReturn(taxReturnId: Int!): [IncomeSource!]!
-  incomeSourcesByTaxpayer(taxYear: Int, taxpayerId: String!): [IncomeSource!]!
+  incomeSources(incomeType: String, paginationInput: PaginationInput, taxYear: Int): PaginatedIncomeSourcesType!
+  incomeSourcesByTaxReturn(paginationInput: PaginationInput, taxReturnId: Int!): PaginatedIncomeSourcesType!
+  incomeSourcesByTaxpayer(paginationInput: PaginationInput, taxYear: Int): PaginatedIncomeSourcesType!
   otherDebt(id: Int!): OtherDebt!
   otherDebts(taxYear: Int!, taxpayerId: String!): [OtherDebt!]!
   realEstate(id: String!): RealEstate!
@@ -287,13 +333,11 @@ type Query {
   sayHello: String!
   taxReport(id: Int!): TaxReportType!
   taxReportDetailed(id: Int!): TaxReportType!
-  taxReports: [TaxReportType!]!
-  taxReportsByTaxpayer(taxpayerId: String!): [TaxReportType!]!
+  taxReports(paginationInput: PaginationInput): PaginatedTaxReportsType!
   taxpayer(id: String!): Taxpayer!
   taxpayers(skip: Float, take: Float, taxYear: Float): [Taxpayer!]!
   vehicle(id: Int!): Vehicle!
-  vehicles(skip: Int, take: Int, taxYear: Int): [Vehicle!]!
-  vehiclesByTaxpayer(taxYear: Int, taxpayerId: String!): [Vehicle!]!
+  vehicles(pagination: PaginationInput, taxYear: Int!): PaginatedVehiclesType!
   whoAmI: User!
 }
 
@@ -304,7 +348,6 @@ type RealEstate {
   id: ID!
   propertyValue: Float!
   purchaseYear: Int
-  taxYear: Int!
   taxpayerId: String!
 }
 
@@ -445,14 +488,12 @@ input UpdateTaxReportInput {
   status: String
   submissionDate: DateTime
   taxYear: Int
-  taxpayerId: String
   totalDeductions: Float
   totalIncome: Float
   totalOwed: Float
   totalRefund: Float
   totalTaxableIncome: Float
   totalTaxes: Float
-  userId: Int
 }
 
 input UpdateTaxpayerInput {
@@ -489,6 +530,7 @@ type User {
   lastName: String
   phone: String
   profilePic: String
+  taxpayerId: String
   updatedAt: DateTime!
 }
 
@@ -500,6 +542,5 @@ type Vehicle {
   purchasePrice: Float!
   purchaseYear: Int
   registrationNumber: String!
-  taxYear: Int!
   taxpayerId: String!
 }

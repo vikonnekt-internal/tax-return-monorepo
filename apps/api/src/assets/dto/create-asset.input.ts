@@ -5,7 +5,6 @@ import { AssetTypeEnum } from './asset-type.enum';
 
 @InputType()
 export class CreateAssetInput {
-  @Field()
   taxpayerId: string;
 
   @Field(() => Int, { nullable: true })

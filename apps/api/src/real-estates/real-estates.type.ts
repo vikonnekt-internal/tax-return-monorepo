@@ -17,9 +17,6 @@ export class RealEstate {
   @Field(() => Int, { nullable: true })
   purchaseYear?: number;
 
-  @Field(() => Int)
-  taxYear: number;
-
   @Field()
   dateCreated: Date;
 
