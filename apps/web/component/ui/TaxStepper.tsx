@@ -44,6 +44,21 @@ type Benefit = {
   updatedAt: string
 }
 
+type Asset = {
+  id: string
+  assetType: string
+  realEstate?: {
+    address: string
+    propertyValue: number
+    propertyId: string
+  }
+  vehicle?: {
+    registrationNumber: string
+    purchasePrice: number
+    purchaseYear?: number
+  }
+}
+
 const steps = [
   { name: 'Gagnaöflun' },
   { name: 'Samskiptaupplýsingar' },
@@ -128,6 +143,28 @@ const GET_BENEFITS = gql`
   }
 `
 
+const GET_ASSETS = gql`
+  query GetAssets($taxYear: Int!) {
+    assets(taxYear: $taxYear) {
+      data {
+        id
+        assetType
+        realEstate {
+          address
+          propertyValue
+          id
+        }
+        vehicle {
+          registrationNumber
+          purchasePrice
+          purchaseYear
+        }
+      }
+      totalCount
+    }
+  }
+`
+
 const GET_TAX_REPORT_DETAILED = gql`
   query GetTaxReportDetailed($id: Int!) {
     taxReportDetailed(id: $id) {
@@ -187,6 +224,14 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.taxYear
   })
 
+  // Get assets data
+  const { data: assetsData, loading: assetsLoading, error: assetsError } = useQuery(GET_ASSETS, {
+    variables: {
+      taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
+    },
+    skip: !taxReportsData?.taxReports?.data[0]?.taxYear
+  })
+
   // Get detailed data for the first tax report if available
   const { data: detailedData } = useQuery(GET_TAX_REPORT_DETAILED, {
     variables: {
@@ -195,12 +240,19 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.id
   })
 
-  if (loading) return <div>Loading...</div>
+  if (loading || assetsLoading) return <div>Loading...</div>
   if (error) {
     console.error('Error fetching tax reports:', error)
     return <div>Error loading tax reports</div>
   }
+  if (assetsError) {
+    console.error('Error fetching assets:', assetsError)
+    return <div>Error loading assets</div>
+  }
 
+  console.log('Tax Year:', taxReportsData?.taxReports?.data[0]?.taxYear)
+  console.log('Raw Assets Data:', assetsData)
+  console.log('Assets Data Structure:', assetsData?.assets?.data)
   console.log('Detailed Data:', detailedData)
   console.log('Benefits Data:', benefitsData)
 
@@ -224,8 +276,53 @@ const TaxStepper = () => {
     }))
   }
 
+  // Helper function to map assets to form data
+  const mapAssetsToFormData = (assets: any[] | undefined) => {
+    console.log('Mapping assets:', assets)
+    if (!assets || !Array.isArray(assets)) {
+      console.log('No assets or invalid assets array')
+      return { 
+        realEstate: [{ fastanumer: '', heimilisfang: '', fasteign_mat: '' }],
+        vehicles: [{ numer: '', kaupar: '', kaupverd: '' }]
+      }
+    }
+
+    const realEstate = assets
+      .filter(asset => {
+        console.log('Checking asset:', asset)
+        return asset.assetType === 'REAL_ESTATE' && asset.realEstate
+      })
+      .map(asset => ({
+        fastanumer: asset.realEstate.id,
+        heimilisfang: asset.realEstate.address,
+        fasteign_mat: asset.realEstate.propertyValue.toString()
+      }))
+
+    const vehicles = assets
+      .filter(asset => {
+        console.log('Checking vehicle:', asset)
+        return asset.assetType === 'VEHICLE' && asset.vehicle
+      })
+      .map(asset => ({
+        numer: asset.vehicle.registrationNumber,
+        kaupar: asset.vehicle.purchaseYear?.toString() || '',
+        kaupverd: asset.vehicle.purchasePrice.toString()
+      }))
+
+    console.log('Mapped real estate:', realEstate)
+    console.log('Mapped vehicles:', vehicles)
+
+    return {
+      realEstate: realEstate.length > 0 ? realEstate : [{ fastanumer: '', heimilisfang: '', fasteign_mat: '' }],
+      vehicles: vehicles.length > 0 ? vehicles : [{ numer: '', kaupar: '', kaupverd: '' }]
+    }
+  }
+
   const subsidyItems = mapBenefitsToSubsidies(benefitsData?.benefits?.data)
   const pensionItems = mapBenefitsToPensions(benefitsData?.benefits?.data)
+  const mappedAssetsData = mapAssetsToFormData(assetsData?.assets?.data)
+
+  console.log('Final mapped assets data:', mappedAssetsData)
 
   const handleNext = (data: any) => {
     let newFormData = { ...formData }
@@ -331,7 +428,7 @@ const TaxStepper = () => {
     content = (
       <AssetsForm
         onNext={handleNext}
-        initialData={formData[3]}
+        initialData={mappedAssetsData}
         onBack={handleBack}
       />
     )
