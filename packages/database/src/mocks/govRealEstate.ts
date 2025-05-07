@@ -17,4 +17,13 @@ export const govRealEstate: GovRealEstate[] = [
     propertyValue: new Prisma.Decimal(38000000),
     purchaseYear: 2015,
   },
+  // Jökull Þórðarson's real estate
+  {
+    id: 3,
+    assetId: 4,
+    propertyId: "210-9876",
+    address: "Bláfjallagata 12, 105 Reykjavík",
+    propertyValue: new Prisma.Decimal(52000000),
+    purchaseYear: 2021,
+  },
 ];

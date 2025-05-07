@@ -27,4 +27,18 @@ export const govHousingLoan: GovHousingLoan[] = [
     interestExpenses: new Prisma.Decimal(500000),
     remainingBalance: new Prisma.Decimal(32000000),
   },
+  // Jökull Þórðarson's housing loan
+  {
+    id: 3,
+    debtId: 4,
+    lenderName: "Íslandsbanki hf.",
+    lenderId: "491008-0160",
+    loanNumber: "56783900123",
+    propertyAddress: "Bláfjallagata 12, 105 Reykjavík",
+    loanTermYears: 30,
+    annualPayments: new Prisma.Decimal(2280000),
+    principalRepayment: new Prisma.Decimal(1360000),
+    interestExpenses: new Prisma.Decimal(920000),
+    remainingBalance: new Prisma.Decimal(28540000),
+  },
 ];

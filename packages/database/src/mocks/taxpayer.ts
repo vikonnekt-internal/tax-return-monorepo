@@ -29,4 +29,18 @@ export const taxpayer: Taxpayer[] = [
     dateCreated: new Date("2023-02-20T14:30:00Z"),
     dateModified: new Date("2023-02-20T14:30:00Z"),
   },
+  {
+    id: "1203894569",
+    firstName: "Jökull",
+    lastName: "Þórðarson",
+    fullAddress: "Bláfjallagata 12, 105 Reykjavík",
+    streetAddress: "Bláfjallagata 12",
+    postalCode: "105",
+    city: "Reykjavík",
+    email: "jokull.thordarson@email.is",
+    phoneNumber: "772-8391",
+    taxYear: 2024,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
 ];

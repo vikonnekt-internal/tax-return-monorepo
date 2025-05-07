@@ -28,4 +28,32 @@ export const govAsset: GovAsset[] = [
     dateCreated: new Date(),
     dateModified: new Date(),
   },
+  // New assets for Jökull Þórðarson
+  {
+    id: 4,
+    taxpayerId: "1203894569",
+    assetType: "real_estate",
+    isActive: true,
+    taxYear: 2024,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 5,
+    taxpayerId: "1203894569",
+    assetType: "vehicle",
+    isActive: true,
+    taxYear: 2024,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
+  {
+    id: 6,
+    taxpayerId: "1203894569",
+    assetType: "vehicle",
+    isActive: true,
+    taxYear: 2024,
+    dateCreated: new Date(),
+    dateModified: new Date(),
+  },
 ];
