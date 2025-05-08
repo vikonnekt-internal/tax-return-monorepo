@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, gql } from '@apollo/client'
 
 import React from 'react'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
@@ -52,11 +53,43 @@ interface RevenueFormProps {
   onBack?: () => void
 }
 
+const CREATE_INCOME_SOURCE = gql`
+  mutation CreateIncomeSource($input: CreateIncomeSourceInput!) {
+    createIncomeSource(input: $input) {
+      id
+      sourceName
+      amount
+      incomeType
+      sourceIdNumber
+      taxReturnId
+      taxYear
+      dateCreated
+      dateModified
+    }
+  }
+`
+
+const CREATE_BENEFIT = gql`
+  mutation CreateBenefit($input: CreateBenefitInput!) {
+    createBenefit(createBenefitInput: $input) {
+      id
+      amount
+      benefitType
+      providerName
+      taxReturnId
+      taxYear
+      taxpayerId
+    }
+  }
+`
+
 const RevenueForm: React.FC<RevenueFormProps> = ({
   onNext,
   initialData,
   onBack,
 }) => {
+  const [createIncomeSource] = useMutation(CREATE_INCOME_SOURCE)
+  const [createBenefit] = useMutation(CREATE_BENEFIT)
 
   const {
     control,
@@ -102,10 +135,71 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
     { label: 'Sjúkrastyrkur', value: 'Sjúkrastyrkur' }
   ]
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log('Form data:', data)
-    if (onNext) {
-      onNext(data)
+    
+    try {
+      // Create income sources
+      const incomeSourcePromises = data.incomeItems.map(item => 
+        createIncomeSource({
+          variables: {
+            input: {
+              sourceName: item.source,
+              amount: parseFloat(item.amount),
+              incomeType: 'SALARY', // Default type, you might want to make this configurable
+              taxYear: new Date().getFullYear(),
+              // taxReturnId will be set by the backend if needed
+            }
+          }
+        })
+      )
+
+      // Create subsidy benefits
+      const subsidyBenefitPromises = data.subsidyItems.map(item =>
+        createBenefit({
+          variables: {
+            input: {
+              amount: parseFloat(item.amount),
+              benefitType: item.type,
+              providerName: item.type, // Using type as provider name for subsidies
+              taxYear: new Date().getFullYear(),
+              // taxReturnId and taxpayerId will be set by the backend if needed
+            }
+          }
+        })
+      )
+
+      // Create pension benefits
+      const pensionBenefitPromises = data.pensionItems.map(item =>
+        createBenefit({
+          variables: {
+            input: {
+              amount: parseFloat(item.amount),
+              benefitType: 'PENSION',
+              providerName: item.source,
+              taxYear: new Date().getFullYear(),
+              // taxReturnId and taxpayerId will be set by the backend if needed
+            }
+          }
+        })
+      )
+
+      const [incomeResults, subsidyResults, pensionResults] = await Promise.all([
+        Promise.all(incomeSourcePromises),
+        Promise.all(subsidyBenefitPromises),
+        Promise.all(pensionBenefitPromises)
+      ])
+
+      console.log('Created income sources:', incomeResults)
+      console.log('Created subsidy benefits:', subsidyResults)
+      console.log('Created pension benefits:', pensionResults)
+
+      if (onNext) {
+        onNext(data)
+      }
+    } catch (error) {
+      console.error('Error creating records:', error)
+      // You might want to show an error message to the user here
     }
   }
 
@@ -315,6 +409,7 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
             <NextSubmit
               handleBack={onBack || (() => { })}
               handleNext={handleSubmit(onSubmit)}
+              disabled={false}
             />
           </Box>
         </form>

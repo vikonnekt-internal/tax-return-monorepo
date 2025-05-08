@@ -2,6 +2,7 @@ import React from 'react'
 import { useForm, Controller, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useMutation, gql } from '@apollo/client'
 
 import NextSubmit from '../component/ui/NextSubmit'
 import { GridRow } from '../component/Grid/GridRow/GridRow'
@@ -41,13 +42,54 @@ interface AssetsFormProps {
   onNext?: (data: FormData) => void
   initialData?: Partial<FormData>
   onBack?: () => void
+  taxpayerId: string
 }
+
+const CREATE_REAL_ESTATE = gql`
+  mutation CreateRealEstate($input: CreateRealEstateInput!) {
+    createRealEstate(createRealEstateInput: $input) {
+      id
+      address
+      propertyValue
+      purchaseYear
+      taxpayerId
+      dateCreated
+      dateModified
+    }
+  }
+`
+
+const CREATE_VEHICLE = gql`
+  mutation CreateVehicle($input: CreateVehicleInput!) {
+    createVehicle(input: $input) {
+      id
+      registrationNumber
+      purchasePrice
+      purchaseYear
+      taxpayerId
+      dateCreated
+      dateModified
+    }
+  }
+`
 
 const AssetsForm: React.FC<AssetsFormProps> = ({
   onNext,
   initialData,
   onBack,
+  taxpayerId,
 }) => {
+  const [createRealEstate] = useMutation(CREATE_REAL_ESTATE)
+  const [createVehicle] = useMutation(CREATE_VEHICLE)
+
+  if (!taxpayerId) {
+    return (
+      <Box>
+        <Text>Vinsamlegast skráðu þig inn til að halda áfram</Text>
+      </Box>
+    )
+  }
+
   const {
     control,
     handleSubmit,
@@ -80,10 +122,55 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
     name: 'vehicles',
   })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     console.log('Form data:', data)
-    if (onNext) {
-      onNext(data)
+    
+    try {
+      // Create real estate assets
+      const realEstatePromises = data.realEstate.map(item =>
+        createRealEstate({
+          variables: {
+            input: {
+              address: item.heimilisfang.trim(),
+              propertyId: item.fastanumer.trim(),
+              propertyValue: parseFloat(item.fasteign_mat.replace(/[^\d]/g, '')),
+              taxYear: new Date().getFullYear(),
+              purchaseYear: undefined, // Optional field
+              taxpayerId
+            }
+          }
+        })
+      )
+
+      // Create vehicle assets
+      const vehiclePromises = data.vehicles.map(item =>
+        createVehicle({
+          variables: {
+            input: {
+              registrationNumber: item.numer.trim(),
+              purchasePrice: parseFloat(item.kaupverd.replace(/[^\d]/g, '')),
+              purchaseYear: item.kaupar ? parseInt(item.kaupar) : undefined,
+              taxYear: new Date().getFullYear(),
+              taxpayerId
+            }
+          }
+        })
+      )
+
+      const [realEstateResults, vehicleResults] = await Promise.all([
+        Promise.all(realEstatePromises),
+        Promise.all(vehiclePromises)
+      ])
+
+      console.log('Created real estate assets:', realEstateResults)
+      console.log('Created vehicle assets:', vehicleResults)
+
+      if (onNext) {
+        onNext(data)
+      }
+    } catch (error) {
+      console.error('Error creating assets:', error)
+      // You might want to show an error message to the user here
     }
   }
 
@@ -253,6 +340,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
           <NextSubmit
             handleBack={onBack || (() => { })}
             handleNext={handleSubmit(onSubmit)}
+            disabled={false}
           />
         </Box>
       </form>
