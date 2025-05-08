@@ -116,6 +116,7 @@ const OtherDebtsExpenses: React.FC<OtherDebtsExpensesProps> = ({
                   render={({ field }) => (
                     <Input
                       {...field}
+                      backgroundColor='blue100'
                       label="Upphæð"
                       placeholder="0"
                       hasError={!!errors.debtExpenses?.[index]?.upphæð}

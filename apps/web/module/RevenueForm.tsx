@@ -220,6 +220,7 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
                       control={control}
                       render={({ field }) => (
                         <Input
+                          backgroundColor="blue100"
                           {...field}
                           label="Tekjur frá"
                           placeholder="Nafn fyrirtækis eða stofnunar"
@@ -238,6 +239,7 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
                       control={control}
                       render={({ field }) => (
                         <Input
+                          backgroundColor="blue100"
                           {...field}
                           label="Upphæð kr."
                           placeholder="0"
@@ -306,6 +308,7 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Input
+                            backgroundColor="blue100"
                             {...field}
                             label="Upphæð kr."
                             placeholder="0"
@@ -355,6 +358,7 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Input
+                            backgroundColor="blue100"
                             {...field}
                             label="Greiðslur frá"
                             placeholder="Nafn stofnunar eða samtaka"
@@ -373,6 +377,7 @@ const RevenueForm: React.FC<RevenueFormProps> = ({
                         control={control}
                         render={({ field }) => (
                           <Input
+                            backgroundColor="blue100"
                             {...field}
                             label="Upphæð kr."
                             placeholder="0"

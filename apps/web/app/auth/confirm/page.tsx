@@ -1,9 +1,10 @@
 'use client'
 
-import AuthBottom from 'apps/return-tax/src/component/ui/AuthBottom'
-import AuthBox from 'apps/return-tax/src/component/ui/AuthBox'
-import ResultBox from 'apps/return-tax/src/component/ui/ResultBox'
+
 import Link from 'next/link'
+import AuthBox from '../../../component/ui/AuthBox'
+import ResultBox from '../../../component/ui/ResultBox'
+import AuthBottom from '../../../component/ui/AuthBottom'
 
 const LoginPage = () => {
   return (

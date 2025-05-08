@@ -15,7 +15,7 @@ export default function ApplicationBox({date, status, title, description, progre
                     </div>
                 </div>
 
-                <Text variant="h3" as="h2">Skattframtal einstaklinga 2024</Text>
+                <Text variant="h3" as="h2">Skattframtal einstaklinga 2025</Text>
 
                 <Text marginBottom={2}>
                     Hér er nýjasta framtal þitt ásamt eldri framtölum
