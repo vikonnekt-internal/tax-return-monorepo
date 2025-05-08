@@ -25,13 +25,7 @@ export const Breadcrumbs: FC<React.PropsWithChildren<BreadcrumbsProps>> = ({
             {child}
           </Text>
           {crumbs.length - 1 > index && (
-            <span>
-              <Icon
-                className="mx-2"
-                type="bullet"
-                width="4"
-                color={separatorColor}
-              />
+            <span className="w-[4px] h-[4px] bg-blue-500 rounded-full mx-2">
             </span>
           )}
         </span>
