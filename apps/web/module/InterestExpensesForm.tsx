@@ -1,38 +1,36 @@
-import React from "react";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React from 'react'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
 
-import NextSubmit from "../component/ui/NextSubmit";
-import { Box } from "../component/Box/Box";
-import { Stack } from "../component/Stack/Stack";
-import { Text } from "../component/Text/Text";
-import { Select } from "../component/Select/Select";
-import { Input } from "../component/Input/Input";
-import { DatePicker } from "../component/DatePicker/DatePicker";
-import { GridRow } from "../component/Grid/GridRow/GridRow";
-import { GridColumn } from "../component/Grid/GridColumn/GridColumn";
-import { Button } from "../component/Button/Button";
-
-// Define Zod schema for form validation
+import NextSubmit from '../component/ui/NextSubmit'
+import { GridRow } from '../component/Grid/GridRow/GridRow'
+import { GridColumn } from '../component/Grid/GridColumn/GridColumn'
+import { Box } from '../component/Box/Box'
+import { DatePicker } from '../component/DatePicker/DatePicker'
+import { Icon } from '../component/IconRC/Icon'
+import { Stack } from '../component/Stack/Stack'
+import { Text } from '../component/Text/Text'
+import { Input } from '../component/Input/Input'
+import { Select } from '../component/Select/Select'
 const interestExpenseSchema = z.object({
-  lánshluti: z.string().min(1, { message: "Lánshluti er nauðsynlegt" }),
+  lánshluti: z.string().min(1, { message: 'Lánshluti er nauðsynlegt' }),
   vextir: z
     .string()
-    .regex(/^\d+(\.\d+)?$/, { message: "Upphæð verður að vera tala" }),
-  dagsetning: z.string().min(1, { message: "Dagsetning er nauðsynlegt" }),
-});
+    .regex(/^\d+(\.\d+)?$/, { message: 'Upphæð verður að vera tala' }),
+  dagsetning: z.string().min(1, { message: 'Dagsetning er nauðsynlegt' }),
+})
 
 const formSchema = z.object({
   interestExpenses: z.array(interestExpenseSchema).min(1),
-});
+})
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
 interface InterestExpensesFormProps {
-  onNext?: (data: FormValues) => void;
-  initialData?: Partial<FormValues>;
-  onBack?: () => void;
+  onNext?: (data: FormValues) => void
+  initialData?: Partial<FormValues>
+  onBack?: () => void
 }
 
 const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
@@ -49,25 +47,25 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
     defaultValues: initialData || {
       interestExpenses: [
         {
-          lánshluti: "Húsnæðislán",
-          vextir: "1.200.000",
-          dagsetning: "2024-01-01",
+          lánshluti: 'Húsnæðislán',
+          vextir: '1.200.000',
+          dagsetning: '2024-01-01',
         },
       ],
     },
-  });
+  })
 
   const { fields, append } = useFieldArray({
     control,
-    name: "interestExpenses",
-  });
+    name: 'interestExpenses',
+  })
 
   const onSubmit = (data: FormValues) => {
-    console.log("Form data:", data);
+    console.log('Form data:', data)
     if (onNext) {
-      onNext(data);
+      onNext(data)
     }
-  };
+  }
 
   return (
     <Box paddingY={4}>
@@ -76,7 +74,7 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
           {fields.map((field, index) => (
             <Box key={field.id} marginY={2}>
               <GridRow>
-                <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <GridColumn span={['12/12', '6/12', '6/12']}>
                   <Box marginBottom={1}>
                     <Text variant="small" color="blue400">
                       Lánshluti
@@ -87,10 +85,10 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
                     control={control}
                     render={({ field: { onChange, value, ...field } }) => {
                       const options = [
-                        { label: "Húsnæðislán", value: "Húsnæðislán" },
-                        { label: "Bílalán", value: "Bílalán" },
-                        { label: "Persónulán", value: "Persónulán" },
-                      ];
+                        { label: 'Húsnæðislán', value: 'Húsnæðislán' },
+                        { label: 'Bílalán', value: 'Bílalán' },
+                        { label: 'Persónulán', value: 'Persónulán' },
+                      ]
                       return (
                         <Select
                           {...field}
@@ -107,14 +105,14 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
                             options.find((option) => option.value === value) ||
                             null
                           }
-                          onChange={(option) => onChange(option?.value || "")}
+                          onChange={(option) => onChange(option?.value || '')}
                           required
                         />
-                      );
+                      )
                     }}
                   />
                 </GridColumn>
-                <GridColumn span={["12/12", "6/12", "6/12"]}>
+                <GridColumn span={['12/12', '6/12', '6/12']}>
                   <Box marginBottom={1}>
                     <Text variant="small" color="blue400">
                       Vextir
@@ -125,6 +123,7 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Vextir"
                         placeholder="0"
@@ -168,17 +167,15 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
           ))}
 
           <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-            <Button
-              variant="ghost"
+            <span
               onClick={() =>
-                append({ lánshluti: "", vextir: "", dagsetning: "" })
+                append({ lánshluti: '', vextir: '', dagsetning: '' })
               }
-              icon="add"
-              iconType="outline"
-              size="small"
+              className='flex gap-2 items-center'
             >
-              Bæta við línu
-            </Button>
+              <Icon type='outline' icon='add' color='blue400' />
+              <Text fontWeight='semiBold' color='blue400'>Bæta við línu</Text>
+            </span>
           </Box>
 
           <Box marginTop={4}>
@@ -190,7 +187,7 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
         </Stack>
       </form>
     </Box>
-  );
-};
+  )
+}
 
-export default InterestExpensesForm;
+export default InterestExpensesForm

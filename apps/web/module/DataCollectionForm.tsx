@@ -8,6 +8,7 @@ import { Input } from "../component/Input/Input";
 import { Text } from "../component/Text/Text";
 import { Stack } from "../component/Stack/Stack";
 import NextSubmit from "../component/ui/NextSubmit";
+import { useQuery, gql } from '@apollo/client';
 
 const formSchema = z.object({
   nafn: z
@@ -35,11 +36,13 @@ interface DataCollectionFormProps {
   onBack?: () => void;
 }
 
+
 const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
   onNext,
   initialData,
   onBack,
 }) => {
+
   const {
     control,
     handleSubmit,
@@ -49,12 +52,13 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       nafn: initialData?.nafn || "",
-      kennitala: initialData?.kennitala || "",
-      simanumer: initialData?.simanumer || "",
-      netfang: initialData?.netfang || "",
+      kennitala: initialData?.kennitala  || "",
+      simanumer: initialData?.simanumer  || "",
+      netfang: initialData?.netfang  || "",
       heimilisfang: initialData?.heimilisfang || "",
     },
   });
+
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -73,7 +77,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
     }
   };
 
-  return (
+  const formContent = (
     <div className="w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack space={3}>
@@ -89,6 +93,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   containerClassName="w-full"
                   {...field}
                   label="Nafn"
@@ -96,6 +101,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.nafn}
                   errorMessage={errors.nafn?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -105,6 +111,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   containerClassName="w-full"
                   {...field}
                   label="Kennitala"
@@ -112,6 +119,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.kennitala}
                   errorMessage={errors.kennitala?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -122,6 +130,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   containerClassName="w-full"
                   {...field}
                   label="Símanúmer"
@@ -129,6 +138,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.simanumer}
                   errorMessage={errors.simanumer?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -138,6 +148,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   {...field}
                   label="Netfang"
                   containerClassName="w-full"
@@ -145,6 +156,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.netfang}
                   errorMessage={errors.netfang?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -155,12 +167,14 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
             control={control}
             render={({ field }) => (
               <Input
+                backgroundColor="blue100"
                 {...field}
                 label="Heimilisfang"
                 placeholder="Heimilisfang"
                 hasError={!!errors.heimilisfang}
                 errorMessage={errors.heimilisfang?.message}
                 required
+                disabled={true}
               />
             )}
           />
@@ -169,12 +183,15 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
             <NextSubmit
               handleBack={onBack || (() => {})}
               handleNext={handleSubmit(onSubmit)}
+              disabled={isSubmitting}
             />
           </Box>
         </Stack>
       </form>
     </div>
   );
+
+  return formContent;
 };
 
 export default DataCollectionForm;

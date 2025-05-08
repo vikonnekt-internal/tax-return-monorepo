@@ -13,6 +13,7 @@ import StaticLayout from "../../component/layout/StaticLayout";
 import InfoIcon from "../../icons/InfoIcon";
 
 const InfoPage = () => {
+  
   return (
     <StaticLayout
       main={
@@ -43,7 +44,7 @@ const InfoPage = () => {
                     <Text variant="h3" color="blue600" marginBottom={1}>
                       Skattframtal einstaklinga
                     </Text>
-                    <Button>
+                    <Link href="/tax" className="h-16 px-6 py-4 bg-blue-600 rounded-lg inline-flex justify-center items-center gap-2 text-white">
                       <span>Skoða framtöl</span>
                       <svg
                         className="ml-2 w-5 h-5"
@@ -59,7 +60,7 @@ const InfoPage = () => {
                           d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                         />
                       </svg>
-                    </Button>
+                    </Link>
                   </Box>
                 </div>
                 <Text>

@@ -4,6 +4,8 @@ import { Button } from "../component/Button/Button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import IDInput from "../component/core/IDInput";
+import { useQuery, gql } from '@apollo/client';
+import { useEffect } from "react";
 
 const loginSchema = z.object({
   userId: z.string().regex(/^\d{6}$/, "ID must be exactly 6 digits"),
@@ -11,7 +13,26 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
+const GET_ASSETS = gql`
+  query GetAssets {
+    assets(taxYear: 2023) {
+      data {
+        id
+        assetType
+        dateCreated
+        dateModified
+        taxpayerId
+      }
+    }
+  }
+`;
+
 const LoginForm: React.FC = () => {
+  const { loading, error, data } = useQuery(GET_ASSETS);
+
+  console.log('Assets:', data?.assets?.data);
+
+
   const {
     register,
     handleSubmit,
