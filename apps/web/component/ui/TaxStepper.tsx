@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AssetsForm from '../../module/AssetsForm'
 import DataCollectionForm from '../../module/DataCollectionForm'
 import DataRetrievalConsent from '../../module/DataConsent'
@@ -14,6 +14,7 @@ import { FormStepper } from '../FormStepper/FormStepper'
 import { useQuery, gql } from '@apollo/client'
 import { Text } from '../Text/Text'
 import React from 'react'
+import EndStepper from '../../module/EndStepper'
 
 type FormDataMap = {
   [key: number]: any
@@ -79,15 +80,8 @@ const steps = [
   { name: 'Samskiptaupplýsingar' },
   { name: 'Tekjur ársins 2024' },
   { name: 'Eignir ársins 2024' },
-  {
-    name: 'Skuldir og vaxtagjöld 2024',
-    subSteps: [
-      { name: 'Vaxtagjöld vegna íbúðarhús..' },
-      { name: 'Aðrar skuldir og vaxtagjöld' },
-    ],
-  },
-  { name: 'Samþykki' },
   { name: 'Yfirlit' },
+  { name: 'Samþykki' },
 ]
 
 const getStepIndex = (step: number, subStep: number) => {
@@ -245,6 +239,26 @@ const TaxStepper = () => {
   const [step, setStep] = useState<number>(0)
   const [subStep, setSubStep] = useState<number>(0)
   const [formData, setFormData] = useState<FormDataMap>({})
+  const [isMobile, setIsMobile] = useState<boolean>(false)
+  const [showSidebar, setShowSidebar] = useState<boolean>(true)
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      setShowSidebar(window.innerWidth >= 768)
+    }
+
+    // Set initial state
+    handleResize()
+
+    // Add event listener
+    window.addEventListener('resize', handleResize)
+
+    // Clean up
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const { data: taxReportsData, loading, error } = useQuery(GET_TAX_REPORTS, {
     variables: {
       paginationInput: {
@@ -303,14 +317,6 @@ const TaxStepper = () => {
     return <div>Error loading debts</div>
   }
 
-  console.log('Tax Year:', taxReportsData?.taxReports?.data[0]?.taxYear)
-  console.log('Raw Assets Data:', assetsData)
-  console.log('Raw Debts Data:', debtsData)
-  console.log('Assets Data Structure:', assetsData?.assets?.data)
-  console.log('Debts Data Structure:', debtsData?.debts?.data)
-  console.log('Detailed Data:', detailedData)
-  console.log('Benefits Data:', benefitsData)
-
   // Helper function to map benefits to subsidy items
   const mapBenefitsToSubsidies = (benefits: any[] | undefined) => {
     if (!benefits) return []
@@ -333,9 +339,7 @@ const TaxStepper = () => {
 
   // Helper function to map assets to form data
   const mapAssetsToFormData = (assets: any[] | undefined) => {
-    console.log('Mapping assets:', assets)
     if (!assets || !Array.isArray(assets)) {
-      console.log('No assets or invalid assets array')
       return { 
         realEstate: [{ fastanumer: '', heimilisfang: '', fasteign_mat: '' }],
         vehicles: [{ numer: '', kaupar: '', kaupverd: '' }]
@@ -343,10 +347,7 @@ const TaxStepper = () => {
     }
 
     const realEstate = assets
-      .filter(asset => {
-        console.log('Checking asset:', asset)
-        return asset.assetType === 'REAL_ESTATE' && asset.realEstate
-      })
+      .filter(asset => asset.assetType === 'REAL_ESTATE' && asset.realEstate)
       .map(asset => ({
         fastanumer: asset.realEstate.id,
         heimilisfang: asset.realEstate.address,
@@ -354,18 +355,12 @@ const TaxStepper = () => {
       }))
 
     const vehicles = assets
-      .filter(asset => {
-        console.log('Checking vehicle:', asset)
-        return asset.assetType === 'VEHICLE' && asset.vehicle
-      })
+      .filter(asset => asset.assetType === 'VEHICLE' && asset.vehicle)
       .map(asset => ({
         numer: asset.vehicle.registrationNumber,
         kaupar: asset.vehicle.purchaseYear?.toString() || '',
         kaupverd: asset.vehicle.purchasePrice.toString()
       }))
-
-    console.log('Mapped real estate:', realEstate)
-    console.log('Mapped vehicles:', vehicles)
 
     return {
       realEstate: realEstate.length > 0 ? realEstate : [{ fastanumer: '', heimilisfang: '', fasteign_mat: '' }],
@@ -375,9 +370,7 @@ const TaxStepper = () => {
 
   // Helper function to map debts to interest expenses
   const mapDebtsToInterestExpenses = (debts: any[] | undefined) => {
-    console.log('Mapping debts:', debts)
     if (!debts || !Array.isArray(debts)) {
-      console.log('No debts or invalid debts array')
       return [{
         lánshluti: 'Húsnæðislán',
         vextir: '',
@@ -406,7 +399,6 @@ const TaxStepper = () => {
       }
     })
 
-    console.log('Mapped interest expenses:', interestExpenses)
     return interestExpenses.length > 0 ? interestExpenses : [{
       lánshluti: 'Húsnæðislán',
       vextir: '',
@@ -418,9 +410,6 @@ const TaxStepper = () => {
   const pensionItems = mapBenefitsToPensions(benefitsData?.benefits?.data)
   const mappedAssetsData = mapAssetsToFormData(assetsData?.assets?.data)
   const mappedDebtsData = mapDebtsToInterestExpenses(debtsData?.debts?.data)
-
-  console.log('Final mapped assets data:', mappedAssetsData)
-  console.log('Final mapped debts data:', mappedDebtsData)
 
   const handleNext = (data: any) => {
     let newFormData = { ...formData }
@@ -457,6 +446,10 @@ const TaxStepper = () => {
     }
   }
 
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar)
+  }
+
   const sections = steps.map((s, i) =>
     s.subSteps
       ? {
@@ -491,7 +484,6 @@ const TaxStepper = () => {
       <DataRetrievalConsent onNext={() => setStep(1)} onBack={handleBack} />
     )
   } else if (step === 1) {
-    console.log('Taxpayer Data for Form:', detailedData?.taxReportDetailed?.taxpayer)
     content = (
       <DataCollectionForm
         onNext={handleNext}
@@ -528,6 +520,7 @@ const TaxStepper = () => {
         onNext={handleNext}
         initialData={mappedAssetsData}
         onBack={handleBack}
+        taxpayerId={detailedData?.taxReportDetailed?.taxpayer?.id || ''}
       />
     )
   } else if (step === 4) {
@@ -552,13 +545,7 @@ const TaxStepper = () => {
     }
   } else if (step === 5) {
     content = (
-      <Box padding={4}>
-        <Text variant="h2">Samþykki</Text>
-        <Text>
-          Staðfestu að allar upplýsingar séu réttar og smelltu á "Áfram".
-        </Text>
-        <Button onClick={() => setStep(6)}>Áfram</Button>
-      </Box>
+     <EndStepper onNext={handleNext} onBack={handleBack}/> 
     )
   } else if (step === 6) {
     content = <StepperResult data={formData} />
@@ -567,15 +554,36 @@ const TaxStepper = () => {
   return (
     <Box background={'purple100'} paddingBottom={8} paddingTop={8}>
       <SectionWrapper>
-        <div className="w-full flex gap-8">
-          <div className="w-full bg-white p-8">{content}</div>
-          <div style={{ minWidth: 320 }}>
-            <FormStepper
-              sections={sections}
-              activeSection={getStepIndex(step, subStep)}
-              activeSubSection={step === 4 ? subStep : 0}
-            />
+        {/* Mobile View - Toggle Button for Sidebar */}
+        {isMobile && (
+          <div className="mb-4">
+            <Button 
+              onClick={toggleSidebar} 
+              variant="secondary"
+              size="sm"
+              className="w-full"
+            >
+              {showSidebar ? 'Fela skref' : 'Sýna skref'}
+            </Button>
           </div>
+        )}
+
+        <div className="w-full flex flex-col md:flex-row gap-4 md:gap-8">
+          {/* Main Content Area */}
+          <div className={`w-full bg-white p-4 md:p-8 order-2 md:order-1 ${showSidebar && isMobile ? 'mt-4' : ''}`}>
+            {content}
+          </div>
+
+          {/* Sidebar/Stepper */}
+          {showSidebar && (
+            <div className="order-1 md:order-2 w-full md:w-auto md:min-w-[320px]">
+              <FormStepper
+                sections={sections}
+                activeSection={getStepIndex(step, subStep)}
+                activeSubSection={step === 4 ? subStep : 0}
+              />
+            </div>
+          )}
         </div>
       </SectionWrapper>
     </Box>
