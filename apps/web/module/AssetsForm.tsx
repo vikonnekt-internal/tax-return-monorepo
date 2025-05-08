@@ -106,6 +106,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Fastanúmer"
                         placeholder="000-0000"
@@ -124,6 +125,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Heimilisfang"
                         placeholder="Heimilisfang fasteignar"
@@ -144,6 +146,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
                   control={control}
                   render={({ field }) => (
                     <Input
+                        backgroundColor="blue100"
                       {...field}
                       label="Fasteignamat"
                       placeholder="0"
@@ -193,6 +196,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Númer"
                         placeholder="XX-000"
@@ -209,6 +213,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Kaupár"
                         placeholder="YYYY"
@@ -225,6 +230,7 @@ const AssetsForm: React.FC<AssetsFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Kaupverð"
                         placeholder="0"

@@ -116,6 +116,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
         })}
       >
         <ReactDatePicker
+          calendarClassName={cn('!bg-blue-50')}
           popperClassName={cn(styles.popper, {
             [styles.popperInline]: appearInline,
             [styles.popperXsmall]: size === "xs",

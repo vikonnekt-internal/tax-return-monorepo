@@ -123,6 +123,7 @@ const InterestExpensesForm: React.FC<InterestExpensesFormProps> = ({
                     control={control}
                     render={({ field }) => (
                       <Input
+                        backgroundColor="blue100"
                         {...field}
                         label="Vextir"
                         placeholder="0"

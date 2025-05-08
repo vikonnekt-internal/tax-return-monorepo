@@ -93,6 +93,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   containerClassName="w-full"
                   {...field}
                   label="Nafn"
@@ -100,6 +101,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.nafn}
                   errorMessage={errors.nafn?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -109,6 +111,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   containerClassName="w-full"
                   {...field}
                   label="Kennitala"
@@ -116,6 +119,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.kennitala}
                   errorMessage={errors.kennitala?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -126,6 +130,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   containerClassName="w-full"
                   {...field}
                   label="Símanúmer"
@@ -133,6 +138,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.simanumer}
                   errorMessage={errors.simanumer?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -142,6 +148,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
               control={control}
               render={({ field }) => (
                 <Input
+                  backgroundColor="blue100"
                   {...field}
                   label="Netfang"
                   containerClassName="w-full"
@@ -149,6 +156,7 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
                   hasError={!!errors.netfang}
                   errorMessage={errors.netfang?.message}
                   required
+                  disabled={true}
                 />
               )}
             />
@@ -159,12 +167,14 @@ const DataCollectionForm: React.FC<DataCollectionFormProps> = ({
             control={control}
             render={({ field }) => (
               <Input
+                backgroundColor="blue100"
                 {...field}
                 label="Heimilisfang"
                 placeholder="Heimilisfang"
                 hasError={!!errors.heimilisfang}
                 errorMessage={errors.heimilisfang?.message}
                 required
+                disabled={true}
               />
             )}
           />

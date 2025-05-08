@@ -171,6 +171,9 @@ export const Select = <
         formatGroupLabel={formatGroupLabel}
         filterOption={createFilter(filterConfig)}
         hideSelectedOptions={hideSelectedOptions}
+        classNames={{
+          control: () => '!bg-blue-50',
+        }}
         components={{
           Control,
           Input,

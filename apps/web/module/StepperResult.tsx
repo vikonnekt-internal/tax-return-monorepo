@@ -6,6 +6,8 @@ import { Text } from "../component/Text/Text";
 import { Button } from "../component/Button/Button";
 import { Divider } from "../component/Divider/Divider";
 import html2pdf from 'html2pdf.js';
+import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 interface StepperResultProps {
   data: any;
@@ -13,6 +15,8 @@ interface StepperResultProps {
 }
 
 const StepperResult: React.FC<StepperResultProps> = ({ data, onEdit }) => {
+  const router = useRouter();
+
   // Extract data from the formData structure
   const personal = data[1] || {};
   const revenue = data[2] || {};
@@ -56,6 +60,7 @@ const StepperResult: React.FC<StepperResultProps> = ({ data, onEdit }) => {
           </Text>
           <Text color="blue400">{subtitle}</Text>
         </Box>
+       
       </Box>
       <Box marginY={2}>
         <Divider />
@@ -371,16 +376,21 @@ const StepperResult: React.FC<StepperResultProps> = ({ data, onEdit }) => {
           )}
       </Box>
       
-      {/* Download PDF Button - Outside the report-content div */}
-      <Box display="flex" justifyContent="center" marginTop={6} marginBottom={4}>
-        <Button 
-          variant="primary" 
-          size="large" 
-          onClick={handleDownloadPDF}
-        >
-          Sækja PDF skýrslu
-        </Button>
-      </Box>
+      <div className="w-full flex items-center justify-between">
+      <Button onClick={() => {}} variant="ghost">
+        Til baka
+      </Button>
+      <div className='flex items-center gap-4'>
+      <Button disabled={false} onClick={() => {}} variant='ghost'>
+        Vista framtal
+      </Button>
+      <Button disabled={false} onClick={() => {
+        router.push('/applications')
+      }} icon="arrowForward">
+        Senda framtal
+      </Button>
+      </div>
+    </div> 
     </Box>
   );
 };
