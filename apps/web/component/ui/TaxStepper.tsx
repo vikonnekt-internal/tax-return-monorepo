@@ -242,20 +242,16 @@ const TaxStepper = () => {
   const [isMobile, setIsMobile] = useState<boolean>(false)
   const [showSidebar, setShowSidebar] = useState<boolean>(true)
 
-  // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768)
       setShowSidebar(window.innerWidth >= 768)
     }
 
-    // Set initial state
     handleResize()
 
-    // Add event listener
     window.addEventListener('resize', handleResize)
 
-    // Clean up
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
@@ -267,7 +263,6 @@ const TaxStepper = () => {
     }
   })
 
-  // Get benefits data
   const { data: benefitsData, loading: benefitsLoading, error: benefitsError } = useQuery(GET_BENEFITS, {
     variables: {
       taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
@@ -275,7 +270,6 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.taxYear
   })
 
-  // Get assets data
   const { data: assetsData, loading: assetsLoading, error: assetsError } = useQuery(GET_ASSETS, {
     variables: {
       taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
@@ -283,7 +277,6 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.taxYear
   })
 
-  // Get debts data
   const { data: debtsData, loading: debtsLoading, error: debtsError } = useQuery(GET_DEBTS, {
     variables: {
       taxYear: taxReportsData?.taxReports?.data[0]?.taxYear || new Date().getFullYear()
@@ -291,7 +284,6 @@ const TaxStepper = () => {
     skip: !taxReportsData?.taxReports?.data[0]?.taxYear
   })
 
-  // Get detailed data for the first tax report if available
   const { data: detailedData } = useQuery(GET_TAX_REPORT_DETAILED, {
     variables: {
       id: taxReportsData?.taxReports?.data[0]?.id ? parseInt(taxReportsData.taxReports.data[0].id) : undefined
@@ -317,7 +309,6 @@ const TaxStepper = () => {
     return <div>Error loading debts</div>
   }
 
-  // Helper function to map benefits to subsidy items
   const mapBenefitsToSubsidies = (benefits: any[] | undefined) => {
     if (!benefits) return []
     
@@ -327,7 +318,6 @@ const TaxStepper = () => {
     }))
   }
 
-  // Helper function to map benefits to pension items
   const mapBenefitsToPensions = (benefits: any[] | undefined) => {
     if (!benefits) return []
     
